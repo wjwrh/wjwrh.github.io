@@ -20,30 +20,60 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="我永远喜欢黑泽露比.webp">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ruby&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="使用IntelliJ IDEA&amp;Maven开发插件一、前言不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用IDEA与Maven简化插件开发流程">
+<meta property="og:url" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Ruby&#39;s Blog">
-<meta property="og:description" content="我永远喜欢黑泽露比.webp">
+<meta property="og:description" content="使用IntelliJ IDEA&amp;Maven开发插件一、前言不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_andYKAtIhB.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_4I5eEgat4b.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_kojI7iKSDy.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_5CQgRwqZ.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/WgO9sB68jD.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/6OT1DGWvQL.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/j6YP02HzZT.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/ycWL9UPVES.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/2iAUuOje9z.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/cmQAXuxPnI.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/nl3WcksUI5.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/j7VN6kZzwG.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/5YEtyGWjnD.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/W1HHaORUzT.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/6TbzyQ4My9.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/E6l66BIY2z.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/wwvqQTfm0U.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507215154938.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507220509540.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507221151977.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507222103110.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211126732.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211247342.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211600006.png">
+<meta property="article:published_time" content="2020-06-04T08:39:15.000Z">
+<meta property="article:modified_time" content="2020-06-04T08:43:46.300Z">
 <meta property="article:author" content="Ruby">
+<meta property="article:tag" content="MineCraft">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="IDE">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_andYKAtIhB.png">
 
-<link rel="canonical" href="http://yoursite.com/">
+<link rel="canonical" href="http://yoursite.com/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Ruby's Blog</title>
+  <title>利用IDEA与Maven简化插件开发流程 | Ruby's Blog</title>
   
 
 
@@ -152,9 +182,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -170,10 +201,9 @@
       <meta itemprop="name" content="Ruby's Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/04/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">利用IDEA与Maven简化插件开发流程</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          利用IDEA与Maven简化插件开发流程
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -220,7 +250,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="使用IntelliJ-IDEA-amp-Maven开发插件"><a href="#使用IntelliJ-IDEA-amp-Maven开发插件" class="headerlink" title="使用IntelliJ IDEA&amp;Maven开发插件"></a>使用IntelliJ IDEA&amp;Maven开发插件</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪费的时间，我写下了这篇IDEA + Maven教程，因为，真的是太好用啦！</p>
+        <h1 id="使用IntelliJ-IDEA-amp-Maven开发插件"><a href="#使用IntelliJ-IDEA-amp-Maven开发插件" class="headerlink" title="使用IntelliJ IDEA&amp;Maven开发插件"></a>使用IntelliJ IDEA&amp;Maven开发插件</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪费的时间，我写下了这篇IDEA + Maven教程，因为，真的是太好用啦！</p>
 <h3 id="1-注意事项"><a href="#1-注意事项" class="headerlink" title="1. 注意事项"></a>1. 注意事项</h3><ul>
 <li>本教程并不包含具体的<code>Java</code>语法教学，但理论上不会<code>Java</code>也能够看懂(但是看懂了也没啥用吧233)<ul>
 <li><code>Java</code>在线学习：<a href="https://www.runoob.com/java/java-tutorial.html" target="_blank" rel="noopener">https://www.runoob.com/java/java-tutorial.html</a></li>
@@ -421,128 +451,35 @@
 <p><strong>请务必使用代理</strong></p>
 <p>我之前没有弄代理的时候十有八九会出现这种情况，<code>Reimport</code>之后不管等多久，那个条就是跑不完，或者干脆没有进度条，直接就全是红色波浪线，绝大多数都是因为网络质量带来的问题，再说一遍，内地用户请务必使用代理</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/MineCraft/" rel="tag"># MineCraft</a>
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/IDE/" rel="tag"># IDE</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/08/mc-PAPIJS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Ruby">
-      <meta itemprop="description" content="我永远喜欢黑泽露比.webp">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ruby's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/08/mc-PAPIJS/" class="post-title-link" itemprop="url">PAPI-JavaScript扩展从入门到精通</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-08 13:17:01" itemprop="dateCreated datePublished" datetime="2020-05-08T13:17:01+08:00">2020-05-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-04 13:34:10" itemprop="dateModified" datetime="2020-06-04T13:34:10+08:00">2020-06-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/MineCraft/" itemprop="url" rel="index"><span itemprop="name">MineCraft</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>9.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="实战教程-JavaScript-amp-PlaceholderAPI-从入门到精通"><a href="#实战教程-JavaScript-amp-PlaceholderAPI-从入门到精通" class="headerlink" title="[实战教程] JavaScript&amp;PlaceholderAPI 从入门到精通"></a>[实战教程] JavaScript&amp;PlaceholderAPI 从入门到精通</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><ul>
-<li>为什么要写这篇教程？<ul>
-<li>站内(指MCBBS中文论坛)已经有<strong>两篇</strong>相关的教程了，但是我发现有人看了这些教程之后，还是一头雾水(而且他们好像都在咕)，不知道从何动手，而且他们对于<code>PlaceholderAPI JS扩展</code>的精髓都没有怎么提及，因此我决定从<strong>实战</strong>角度出发，设立若干情景，旨在帮助那些连JS都不怎么会的人，能够直接依葫芦画瓢解决他们的问题；帮助那些了解JS的人去接触<code>PlaceholderAPI JS扩展</code>中最强最好用的功能(因为我发现官方的wiki里压根就没有详细介绍过这些功能的使用)</li>
-<li><strong>只要我一次性写完，我就能保证我不会鸽了！！</strong></li>
-</ul>
-</li>
-<li>本教程的结构？<ul>
-<li>本教程分为三个部分，第一部分是比较详细的基础介绍，第二部分是若干种场景的实战教程，有临时需求的小白可以直接看实战部分，找到自己需要的代码抄走修改。第三部分为高级用法，利用<code>JS引擎</code>的特性调用<code>Java</code>中的类</li>
-</ul>
-</li>
-<li>这篇教程的受众是？<ul>
-<li>完全没有<code>JS</code>知识，但是有学习动力的小白，我会尽可能的省略有关<code>JS</code>的技术细节(虽然还是强力推荐你们系统的学习一下<code>JavaScript</code>)，帮助你们只要稍微改动几个特定的值就能够实现你们自己需要的<code>JS</code>脚本</li>
-<li>有一定的<code>JS</code>基础或插件编写基础的人群，我会简要的介绍<code>PlaceholderAPI JS扩展</code>的灵魂，<code>BukkitPlayer</code>与<code>BukkitServer</code></li></ul></li></ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/08/mc-PAPIJS/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/08/mc-PAPIJS/" rel="prev" title="PAPI-JavaScript扩展从入门到精通">
+      <i class="fa fa-chevron-left"></i> PAPI-JavaScript扩展从入门到精通
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
@@ -595,6 +532,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用IntelliJ-IDEA-amp-Maven开发插件"><span class="nav-text">使用IntelliJ IDEA&amp;Maven开发插件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、前言"><span class="nav-text">一、前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-注意事项"><span class="nav-text">1. 注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-什么是IDEA？"><span class="nav-text">2.什么是IDEA？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-什么是Maven？"><span class="nav-text">3.什么是Maven？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-为什么我们需要Maven？"><span class="nav-text">4.为什么我们需要Maven？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、下载IDEA"><span class="nav-text">二、下载IDEA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、创建项目"><span class="nav-text">三、创建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、IDEA-amp-Maven代理的配置"><span class="nav-text">四、IDEA&amp;Maven代理的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-IDEA代理配置"><span class="nav-text">1. IDEA代理配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Maven代理配置"><span class="nav-text">2.Maven代理配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、Maven的配置"><span class="nav-text">五、Maven的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-0-打开pom-xml"><span class="nav-text">Step 0. 打开pom.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-设置Java源代码的编码方式以及JDK版本"><span class="nav-text">Step 1. 设置Java源代码的编码方式以及JDK版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-2-从远程仓库添加依赖"><span class="nav-text">Step 2. 从远程仓库添加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-3-导入本地jar文件"><span class="nav-text">Step 3. 导入本地jar文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-4-使用Shade插件"><span class="nav-text">Step 4. 使用Shade插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-5-关于Scope"><span class="nav-text">Step 5.关于Scope</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、实战演示"><span class="nav-text">六、实战演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景一-从零开始自建插件"><span class="nav-text">场景一    从零开始自建插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景二-使用他人的源代码编译插件"><span class="nav-text">场景二    使用他人的源代码编译插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-QuickShop"><span class="nav-text">1. QuickShop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-BungeeCord"><span class="nav-text">2. BungeeCord</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七、Q-amp-A"><span class="nav-text">七、Q&amp;A</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-‘mvn’-不是内部或外部命令，也不是可运行的程序或批处理文件"><span class="nav-text">1. ‘mvn’ 不是内部或外部命令，也不是可运行的程序或批处理文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？"><span class="nav-text">2. 我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
