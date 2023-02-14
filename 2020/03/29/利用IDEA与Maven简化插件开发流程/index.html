@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.go2mc.net","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="使用IntelliJ IDEA&amp;Maven开发插件一、前言不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用IDEA与Maven简化插件开发流程">
+<meta property="og:url" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Ruby&#39;s Blog">
+<meta property="og:description" content="使用IntelliJ IDEA&amp;Maven开发插件一、前言不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_andYKAtIhB.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_4I5eEgat4b.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_kojI7iKSDy.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_5CQgRwqZ.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/WgO9sB68jD.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/6OT1DGWvQL.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/j6YP02HzZT.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/ycWL9UPVES.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/2iAUuOje9z.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/cmQAXuxPnI.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/nl3WcksUI5.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/j7VN6kZzwG.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/5YEtyGWjnD.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/W1HHaORUzT.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/6TbzyQ4My9.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/E6l66BIY2z.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/wwvqQTfm0U.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507215154938.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507220509540.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507221151977.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507222103110.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211126732.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211247342.png">
+<meta property="og:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211600006.png">
+<meta property="article:published_time" content="2020-03-29T16:39:15.000Z">
+<meta property="article:modified_time" content="2020-03-29T16:39:15.000Z">
+<meta property="article:author" content="Ruby">
+<meta property="article:tag" content="MineCraft">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="IDE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_andYKAtIhB.png">
+
+<link rel="canonical" href="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>利用IDEA与Maven简化插件开发流程 | Ruby's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ruby's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">In solitude, where we are least alone.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.go2mc.net/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ruby">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ruby's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用IDEA与Maven简化插件开发流程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-29 16:39:15" itemprop="dateCreated datePublished" datetime="2020-03-29T16:39:15+00:00">2020-03-29</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MineCraft/" itemprop="url" rel="index"><span itemprop="name">MineCraft</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="使用IntelliJ-IDEA-amp-Maven开发插件"><a href="#使用IntelliJ-IDEA-amp-Maven开发插件" class="headerlink" title="使用IntelliJ IDEA&amp;Maven开发插件"></a>使用IntelliJ IDEA&amp;Maven开发插件</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>不知道各位开发插件使用的是什么IDE，eclipse? NetBeans?还是IDEA?相信各位应该对JetBrains全家桶有所耳闻，这也是(我自认为)目前最好的Java IDE，其拥有丰富的插件，具有极强的可扩展性，而且还有很多实用的功能，可以让程序员的生活更加美好。为了方便各位刚刚接触插件的开发者，节省他们因为不称手的工具而浪费的时间，我写下了这篇IDEA + Maven教程，因为，真的是太好用啦！</p>
+<h3 id="1-注意事项"><a href="#1-注意事项" class="headerlink" title="1. 注意事项"></a>1. 注意事项</h3><ul>
+<li>本教程并不包含具体的<code>Java</code>语法教学，但理论上不会<code>Java</code>也能够看懂(但是看懂了也没啥用吧233)<ul>
+<li><code>Java</code>在线学习：<a target="_blank" rel="noopener" href="https://www.runoob.com/java/java-tutorial.html">https://www.runoob.com/java/java-tutorial.html</a></li>
+</ul>
+</li>
+<li>请不要与我争论哪一个 IDE 更好用，这没有意义，纯属浪费时间</li>
+<li>本教程的目标为教会各位如何使用 IDEA 配合 Maven 从头开始打包出一个可以使用的插件，其中会可能会穿插一些其他知识的教学，各位可以参考</li>
+<li>为了浅显易懂很多东西可能不会讲的很具体，部分细节也会简化，请不要杠谢谢</li>
+<li>本教程使用系统环境为<code>Windows 10</code>，<code>Linux</code>相关教程暂不提供，因为本教程绝大多数部分都是对于任意操作系统通用的；少部分(例如环境变量配置)，我相信有能力使用<code>Linux</code>进行开发的人一定可以自己去完成<span id="more"></span></li>
+<li><strong>强烈建议国内用户使用梯子</strong></li>
+</ul>
+<h3 id="2-什么是IDEA？"><a href="#2-什么是IDEA？" class="headerlink" title="2.什么是IDEA？"></a>2.什么是IDEA？</h3><p>IntelliJ IDEA是一种商业化销售的Java集成开发环境（Integrated Development Environment，IDE）工具软件，由 JetBrains 软件公司（前称为 IntelliJ）开发，提供Apache 2.0开放式授权的社区版本以及专有软件的商业版本。(什么是IDE？ 可以理解为一个工具包，包含了编辑器、编译器、调试器等工具，一条龙服务，使用起来更方便)</p>
+<h3 id="3-什么是Maven？"><a href="#3-什么是Maven？" class="headerlink" title="3.什么是Maven？"></a>3.什么是Maven？</h3><ul>
+<li>Wiki的解释：<ul>
+<li>Apache Maven，是一个软件（特别是Java软件）项目管理及自动构建工具，由Apache软件基金会所提供。基于项目对象模型（缩写：POM）概念，Maven利用一个中央信息片断能管理一个项目的构建、报告和文档等步骤。</li>
+</ul>
+</li>
+<li>个人理解：<ul>
+<li>依赖管理器(当然实际功能不止这么简单)</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-为什么我们需要Maven？"><a href="#4-为什么我们需要Maven？" class="headerlink" title="4.为什么我们需要Maven？"></a>4.为什么我们需要Maven？</h3><p>因为你需要一个更好地管理依赖的方式，Maven能够提供依赖包的结构化管理，而且Maven也有丰富的plugin，可以实现更多更强大的功能</p>
+<h2 id="二、下载IDEA"><a href="#二、下载IDEA" class="headerlink" title="二、下载IDEA"></a>二、下载IDEA</h2><p>IDEA分为两个版本，一个是免费的<code>community</code>版本，一个是收费的<code>ultimate</code>版本</p>
+<ul>
+<li>IDEA下载地址： <a target="_blank" rel="noopener" href="https://www.jetbrains.com/idea/download/">https://www.jetbrains.com/idea/download/</a></li>
+</ul>
+<p>本教程会以收费版<code>IDEA Ultimate 2019.3.4</code>为例进行讲解，如果访问或下载过慢可以使用梯子下载，个人推荐使用<code>Toolbox APP</code>，可以更好的管理<code>Jetbrains</code>的各种IDE</p>
+<ul>
+<li>Toolbox下载地址： <a target="_blank" rel="noopener" href="https://www.jetbrains.com/toolbox-app/">https://www.jetbrains.com/toolbox-app/</a></li>
+</ul>
+<p>特别注意，如果你是大学生，且你们学校提供了学生邮箱<code>以.edu或.edu.cn结尾</code>，那么你很有可能能白嫖到<code>Jetbrains</code>全家桶！这个是真的香，因为他家别的IDE也十分好用，例如<code>PyCharm</code>、<code>WebStorm</code>等等</p>
+<ul>
+<li>白嫖链接：<a target="_blank" rel="noopener" href="https://www.jetbrains.com/shop/eform/students">https://www.jetbrains.com/shop/eform/students</a></li>
+</ul>
+<p>如果你的学校学生邮箱不可用，你可以去<code>JetBrains/swot</code>项目提<code>pr</code></p>
+<h2 id="三、创建项目"><a href="#三、创建项目" class="headerlink" title="三、创建项目"></a>三、创建项目</h2><ol>
+<li><p>打开IDEA，点击<code>Create New Project</code></p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_andYKAtIhB.png"></p>
+</li>
+</ol>
+<ol start="2">
+<li><p>选择<code>Maven</code>并直接点击<code>Next</code></p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_4I5eEgat4b.png"></p>
+</li>
+</ol>
+<ol start="3">
+<li><p>有关这几个选项有必要解释一下</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_kojI7iKSDy.png"></p>
+</li>
+</ol>
+<ul>
+<li><code>Name</code> 项目的名字，可以随便取</li>
+<li><code>Location</code> 项目文件的存储地址，可以自己修改</li>
+<li><code>GroupId</code> 如果你有域名的话，可以填你的域名，但是需要反过来填写，例如我的域名是<code>kurosawaruby.cn</code>，那么我就要写成<code>cn.kurosawaruby</code>，当然你随便写也是没问题的(，这个的目的主要是为了防止包名的冲突，不过你自己瞎编不要编一个别人的域名出来..</li>
+<li><code>ArtifactId</code> 你的插件名字</li>
+<li><code>Version</code> 插件的版本</li>
+</ul>
+<ol start="4">
+<li><p>填写完毕之后点击<code>Finish</code>就行啦~，接下来你就可以在<code>src/main</code>目录下添加新的包和类了</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/idea64_5CQgRwqZ.png"></p>
+</li>
+</ol>
+<h2 id="四、IDEA-amp-Maven代理的配置"><a href="#四、IDEA-amp-Maven代理的配置" class="headerlink" title="四、IDEA&amp;Maven代理的配置"></a>四、IDEA&amp;Maven代理的配置</h2><ul>
+<li>没有代理的同学可以跳过这一条</li>
+<li><strong>强烈建议</strong>大陆用户使用代理，否则你可能会被低于<code>10kb/s</code>的下载速度折磨的痛不欲生</li>
+</ul>
+<h3 id="1-IDEA代理配置"><a href="#1-IDEA代理配置" class="headerlink" title="1. IDEA代理配置"></a>1. IDEA代理配置</h3><ul>
+<li><p>同时按下<code>Ctrl + Alt + S</code>，打开IDEA的Settings界面</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/WgO9sB68jD.png"></p>
+</li>
+<li><p>在搜索框中输入<code>Proxy</code>，便会进入IDEA的代理设置界面</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/6OT1DGWvQL.png"></p>
+</li>
+<li><p>勾选<code>Manual proxy configuration</code>这里有几个设置项目，设置完成后点击<code>Apply</code>保存即可</p>
+<ul>
+<li><code>代理协议</code>： 这里推荐使用<code>HTTP</code>代理，因为IDEA貌似使用的是socks4代理，而现在主流的代理软件使用的协议都是socks5，注意，如果是使用<code>V2</code>的用户需要开启HTTP代理模式</li>
+<li><code>Host name</code>：一般是<code>localhost(127.0.0.1)</code></li>
+<li><code>Post number</code>：代理端口</li>
+</ul>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/j6YP02HzZT.png"></p>
+</li>
+</ul>
+<h3 id="2-Maven代理配置"><a href="#2-Maven代理配置" class="headerlink" title="2.Maven代理配置"></a>2.Maven代理配置</h3><ul>
+<li><p>Maven的代理配置稍显复杂，需要修改Maven的配置文件，首先我们需要找到IDEA的安装目录，使用Toolbox的用户可以在Toolbox的设置中找到</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/ycWL9UPVES.png"></p>
+</li>
+<li><p>打开<code>&#123;IDEA安装目录&#125;\ch-0\&#123;IDEA内部版本号&#125;\plugins\maven\lib\maven3\conf\settings.xml</code>，转到proxies标签中，去掉红框表示的注释</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/2iAUuOje9z.png"></p>
+</li>
+<li><p>修改特定的标签为你所需要的，修改好以后的效果应该是这样</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/cmQAXuxPnI.png"></p>
+</li>
+</ul>
+<p>修改完成之后就可以使用代理高速下载了~</p>
+<h2 id="五、Maven的配置"><a href="#五、Maven的配置" class="headerlink" title="五、Maven的配置"></a>五、Maven的配置</h2><p>Maven的配置也是很有讲究的，在一些大型项目中会用到Maven所支持的许多特性，构建一个层次结构分明的依赖管理关系，而本教程作为一个入门教程，并不会教那些很复杂的东西，本教程的目的只有一个——读完教程之后就能够从零开始构建一个自己的插件</p>
+<h3 id="Step-0-打开pom-xml"><a href="#Step-0-打开pom-xml" class="headerlink" title="Step 0. 打开pom.xml"></a>Step 0. 打开pom.xml</h3><p>在之前创建好的项目中打开<code>pom.xml</code>，这个就是本项目的Maven配置文件了，以下所有关于Maven的配置都会在此文件中完成</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/nl3WcksUI5.png"></p>
+<h3 id="Step-1-设置Java源代码的编码方式以及JDK版本"><a href="#Step-1-设置Java源代码的编码方式以及JDK版本" class="headerlink" title="Step 1. 设置Java源代码的编码方式以及JDK版本"></a>Step 1. 设置Java源代码的编码方式以及JDK版本</h3><p>在<code>pom.xml</code>的project标签范围内添加以下代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>设置编码方式是为了保证跨平台的兼容性，而设置源及目标的JDK版本是为了能够正确的使用某些特性，否则你在使用lambda的时候都有可能会编译错误</p>
+<h3 id="Step-2-从远程仓库添加依赖"><a href="#Step-2-从远程仓库添加依赖" class="headerlink" title="Step 2. 从远程仓库添加依赖"></a>Step 2. 从远程仓库添加依赖</h3><p>有时插件作者会以Maven远程仓库的形式提供给你他插件的依赖，你可以在其插件的开发者文档中找到，这里以<code>Spigot API</code>举例，我们可以在spigot官方找到</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/j7VN6kZzwG.png"></p>
+<p>对于尚未添加任何依赖的我们来说，直接把这一段复制进pom.xml就好了，之后Maven会询问我们是否要导入修改，我们可以手动导入，也可以开启自动导入</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/5YEtyGWjnD.png"></p>
+<p>开始导入后，Maven就会自动拉取远程的依赖到本地，如果你没有代理的话你可能需要很久..导入成功后我们就可以在<code>Maven-&gt;Dependencies</code>中看到我们导入的依赖了</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/W1HHaORUzT.png"></p>
+<p>这里值得一提的就是<code>dependency</code>中的<code>scope</code>标签，这个标签的详解会在下面介绍，姑且让他保持现状，此外就是有多个仓库以及多个远程依赖的情况，我们只需分别在<code>repositories</code>中新建<code>repository</code>标签，在<code>dependencies</code>中新建<code>dependency</code>标签即可，效果如下</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/6TbzyQ4My9.png"></p>
+<h3 id="Step-3-导入本地jar文件"><a href="#Step-3-导入本地jar文件" class="headerlink" title="Step 3. 导入本地jar文件"></a>Step 3. 导入本地jar文件</h3><p>有时可能插件作者并没有为你提供远程仓库，这个时候我们就需要自行导入本地的jar文件，例如我们要导入桌面上的<code>Vault.jar</code>文件，可进行如下操作</p>
+<ol>
+<li><p>在<code>dependencies</code>标签中新建<code>dependency</code>标签，这里我们需要知道三个值，<code>groupId, ArtifactId 以及 version</code>，这三个值我们都可以在插件的<code>plugin.yml</code>中找到</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/E6l66BIY2z.png"></p>
+</li>
+<li><p>填写上面的值，同时需要设置scope为system，systemPath为你的jar文件的位置</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/wwvqQTfm0U.png"></p>
+<p><strong>强烈不推荐</strong>这种将依赖地址硬编码的方式，这里只是作为演示才这么写的，规范的处理方式应该是在项目根目录中新建一个lib文件夹，将jar文件放入其中，同时将systemPath改为<code>$&#123;basedir&#125;/lib/Vault.jar</code></p>
+</li>
+</ol>
+<h3 id="Step-4-使用Shade插件"><a href="#Step-4-使用Shade插件" class="headerlink" title="Step 4. 使用Shade插件"></a>Step 4. 使用Shade插件</h3><p>如果你引入了第三方库，那么你就需要使用maven的shade插件将你引入的第三方库一同打包进最终的jar文件中，否则你的插件会因为找不到指定的class而崩溃，Maven Shade插件是一个功能十分强大的插件，关于这个插件的详细配置十分复杂，emmmm以后可能会考虑专门讲解，现在我们只需要把下列代码直接贴进去就能用了</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-shade-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">minimizeJar</span>&gt;</span>true<span class="tag">&lt;/<span class="name">minimizeJar</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">createDependencyReducedPom</span>&gt;</span>false<span class="tag">&lt;/<span class="name">createDependencyReducedPom</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">createSourcesJar</span>&gt;</span>false<span class="tag">&lt;/<span class="name">createSourcesJar</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">filters</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">artifact</span>&gt;</span>*:*<span class="tag">&lt;/<span class="name">artifact</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">excludes</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>META-INF/*.SF<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>META-INF/*.DSA<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">exclude</span>&gt;</span>META-INF/*.RSA<span class="tag">&lt;/<span class="name">exclude</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">excludes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">filters</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">phase</span>&gt;</span>package<span class="tag">&lt;/<span class="name">phase</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>shade<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Step-5-关于Scope"><a href="#Step-5-关于Scope" class="headerlink" title="Step 5.关于Scope"></a>Step 5.关于Scope</h3><p>常用的scope一共有下列几种</p>
+<ul>
+<li><code>compile</code> 这是默认的scope，表示该依赖参与项目的编译、测试和运行阶段，你使用的第三方(可以理解为跟MC没有直接关系的)依赖请设置为compile(但是我也不知道为什么不用shade不会打包进jar文件..)</li>
+<li><code>provided</code> 它表示这个依赖在运行时由运行时环境提供，不需要打包进jar文件中，通常绝大多数的其它插件API、服务器API使用此模式，因为在运行时服务端中其它运行中的对应插件会提供指定的类</li>
+<li><code>system</code> 模式上与provided相同，唯一的区别就是它不来自远程仓库，而来自本地</li>
+</ul>
+<h2 id="六、实战演示"><a href="#六、实战演示" class="headerlink" title="六、实战演示"></a>六、实战演示</h2><h3 id="场景一-从零开始自建插件"><a href="#场景一-从零开始自建插件" class="headerlink" title="场景一    从零开始自建插件"></a>场景一    从零开始自建插件</h3><p>本场景的最终目的是编译出一个利用<code>PlaceholderAPI</code>来向每一个进入服务器的玩家发出固定问候消息的插件。插件极其简单，而且教授编写插件不是本教程的目标，所以暂不在此过多赘述。</p>
+<ul>
+<li><p>创建一个全新的<code>Maven</code>项目</p>
+<p>这一步在上面已经有详细的讲解，因此不再重复</p>
+</li>
+<li><p>编辑<code>pom.xml</code>，添加<code>spigot-api</code>与<code>PlaceholderAPI</code></p>
+<p>关于如何添加<code>PlaceholderAPI</code>依赖可以到其开发wiki中寻找<a target="_blank" rel="noopener" href="https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Hook-into-PlaceholderAPI%EF%BC%8C%E4%BB%A5%E4%B8%8B%E6%98%AF%E6%88%91%E5%8A%A0%E5%A5%BD%E5%90%84%E7%A7%8D%E4%BF%A1%E6%81%AF%E7%9A%84%60pom.xml%60">https://github.com/PlaceholderAPI/PlaceholderAPI/wiki/Hook-into-PlaceholderAPI，以下是我加好各种信息的`pom.xml`</a></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cn.kurosawaruby<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>PluginTest<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span>&gt;</span>cn.kurosawaruby.PluginTest<span class="tag">&lt;/<span class="name">package</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/resources<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">repositories</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>spigot-repo<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://hub.spigotmc.org/nexus/content/repositories/snapshots/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span>&gt;</span>placeholderapi<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://repo.extendedclip.com/content/repositories/placeholderapi/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">repositories</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.spigotmc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spigot-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.15.2-R0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.jetbrains<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>annotations<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>17.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.18.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>me.clip<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>placeholderapi<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.10.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>细心的同学可能已经发现了，上面多了几个新的标签我从来都没有提到过，这里我统一的介绍一下，关于<code>resources</code>。你可以在被添加到<code>resource</code>的目录下的所有文件中使用<code>Maven</code>里定义的变量(实际上不止这些，还可以使用环境变量等等)，使用方式为<code>$&#123;变量名&#125;</code>，这些变量在打包后会同一被替换为他们相应的值，这个功能最大的好处就是，如果你升级了版本，或者修改了包名或者插件名，你可以不必既在<code>pom.xml</code>中修改，又在<code>plugin.yml</code>中修改，只需在第一次编写时，在<code>plugin.yml</code>中使用变量，那么在修改时统一修改<code>pom.xml</code>中的相关值即可，例如我这个插件对应的<code>plugin.yml</code>文件如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">$&#123;name&#125;</span></span><br><span class="line"><span class="attr">main:</span> <span class="string">$&#123;package&#125;.$&#123;name&#125;</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">$&#123;project.version&#125;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">wjwrh</span></span><br><span class="line"></span><br><span class="line"><span class="attr">depend:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">PlaceholderAPI</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># P.S. 变量package是在pom.xml中properties标签内定义的</span></span><br></pre></td></tr></table></figure></li>
+<li><p>重新载入<code>Maven</code>配置或直接开启自动导入</p>
+</li>
+<li><p>新建主类，如果你套用我上面的一套配置，那么你主类的名称必须为你项目的名称(为了对应<code>$&#123;name&#125;</code>变量，当然这也是一个不错的习惯)，新建并注册<code>Listener</code>，如果上述正常的话此时你应该在调用<code>PlaceholderAPI</code>的时候会直接触发自动补全功能</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507215154938.png" alt="image-20200507215154938"></p>
+</li>
+<li><p>完成一切操作之后，点击右侧的<code>Maven -&gt; 项目名 -&gt; Lifecycle -&gt; package</code>，一切正常的话，就会在<code>target</code>目录下生成你的目标插件</p>
+</li>
+</ul>
+<h3 id="场景二-使用他人的源代码编译插件"><a href="#场景二-使用他人的源代码编译插件" class="headerlink" title="场景二    使用他人的源代码编译插件"></a>场景二    使用他人的源代码编译插件</h3><p>本场景的最终目的是完成编译两个插件，一个是上古版本停止维护的商店插件<code>QuickShop</code>(并非仍在活跃开发的reremake版本)，一个是由多个模块组成的项目<code>BungeeCord</code>。前者适用于我们想要魔改某个开源软件的代码来实现自己想要的功能，后者是对模块化<code>Maven</code>架构的项目的一个简单的展示(暂时不会介绍技术细节)</p>
+<h4 id="1-QuickShop"><a href="#1-QuickShop" class="headerlink" title="1. QuickShop"></a>1. QuickShop</h4><ul>
+<li><p>首先从<code>GitHub</code>等代码托管网站上获取到你想要的插件的<a target="_blank" rel="noopener" href="https://github.com/KaiKikuchi/QuickShop">源代码</a>，这里推荐一个名为<code>JetBrains Toolbox Extension</code>的<code>Chrome</code>扩展，它可以直接一键把<code>Git</code>仓库的代码克隆到本地并自动创建<code>IDEA</code>项目</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507220509540.png" alt="image-20200507220509540"></p>
+</li>
+<li><p>如果你没有使用上述扩展的话也没有关系，把代码弄到本地后，点击<code>IDEA</code>左上角的<code>File -&gt; Open</code>，打开你下载下来的项目文件夹即可，这里有一个非常棘手的问题，那就是作者为了使用<code>NMS</code>手动导入了各个版本的服务端文件<code>Spigot.jar</code>，但是他在<code>.gitignore</code>中把<code>lib</code>目录给忽略掉了，导致我们没有办法直接从他那里获取到完整的依赖，我采取的解决方法是将这些服务端一一从网上收集并添加到<code>lib</code>文件夹中</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507221151977.png" alt="image-20200507221151977"></p>
+</li>
+<li><p>修改掉我们想要修改的代码之后，如同上一个场景一样，点击<code>Maven</code>然后<code>Package</code>即可，需要注意的是你必须关注开源代码所采用的协议，某些协议很有可能会限制你对源代码的某些行为，<strong>请务必留意</strong></p>
+</li>
+</ul>
+<h4 id="2-BungeeCord"><a href="#2-BungeeCord" class="headerlink" title="2. BungeeCord"></a>2. BungeeCord</h4><p>BC是一个由多个模块构成的项目，其<a target="_blank" rel="noopener" href="https://github.com/SpigotMC/BungeeCord">源代码</a>在<code>GitHub</code>上进行托管</p>
+<ul>
+<li><p>我们首先采取与上述相同的办法将将项目导入<code>IDEA</code></p>
+</li>
+<li><p>我们可以看到右侧的<code>Maven</code>框中有若干个项目，而左侧也有若干文件夹，最外层的根目录与每一个文件夹中都包含有一个<code>pom.xml</code>，我们可以查看最外层的<code>pom.xml</code>内有一个名为<code>modules</code>的标签</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">modules</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>api<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>bootstrap<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>chat<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>config<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>event<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>log<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>module<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>protocol<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>proxy<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>query<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">module</span>&gt;</span>native<span class="tag">&lt;/<span class="name">module</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">modules</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>他们的关系大概可以理解成为一种树状结构，即最外层的<code>pom.xml</code>是一个根节点，而每一个子模块都是它的子节点</p>
+</li>
+<li><p>经过上述的介绍，我们想要编译BC所有模块的话，只需要对”根节点”进行打包即可，有点类似于<code>makefile</code>，编译一个文件前会先编译完成它的所有依赖，<code>Maven</code>也是一样，编译”根节点”前会逐个编译完它所有的子节点，因此我们只需要在右侧找到带有<code>root</code>标示的项目，对它进行<code>package</code>即可</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507222103110.png" alt="image-20200507222103110"></p>
+</li>
+<li><p>编译后我们即可在<code>target</code>目录中得到我们需要的</p>
+</li>
+</ul>
+<h2 id="七、Q-amp-A"><a href="#七、Q-amp-A" class="headerlink" title="七、Q&amp;A"></a>七、Q&amp;A</h2><p>注意：本Q&amp;A主要总结个人在码代码的过程中碰到的有关<code>Maven</code>的问题或者我自己认为初次接触<code>IDEA+Maven</code>的人会遇到的问题，如果你遇到了别的问题，可以向我提出，我会在尝试解决后将其归纳在本条目中，本条目不定期更新。</p>
+<h3 id="1-‘mvn’-不是内部或外部命令，也不是可运行的程序或批处理文件"><a href="#1-‘mvn’-不是内部或外部命令，也不是可运行的程序或批处理文件" class="headerlink" title="1. ‘mvn’ 不是内部或外部命令，也不是可运行的程序或批处理文件"></a>1. ‘mvn’ 不是内部或外部命令，也不是可运行的程序或批处理文件</h3><p>这是典型的环境变量问题，大概设想一下，如果你不提前”告知”系统你的<code>maven</code>在哪，你还想让你的系统能够在你输入<code>mvn</code>时做出相应，你的系统需要做什么？你的系统需要扫描你的整个硬盘，以找到名为<code>mvn</code>的可以运行的程序，但是这还有一个问题，你可能装了<code>maven2</code>和<code>maven3</code>，甚至装了多个版本相同的<code>maven</code>，操作系统要用哪一个？这显然是恨不符合逻辑也不符合现实的。因此，我们需要”告知”操作系统，你的<code>maven</code>装在哪。”告知”的方式就是通过环境变量。(其实会接触到插件开发的应该都已经熟知怎么配置环境变量了，不过我还是在这里啰嗦两句吧)</p>
+<ul>
+<li><p>右击<code>此电脑</code>，单击<code>属性</code></p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211126732.png" alt="image-20200507211126732"></p>
+</li>
+<li><p>点击高级系统设置</p>
+</li>
+<li><p>新建一个名为<code>MAVEN_HOME</code>的系统变量，其值为<code>maven3</code>的目录，具体怎么寻找参考上面设置代理的相关条目</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211247342.png" alt="image-20200507211247342"></p>
+</li>
+<li><p>再编辑系统变量<code>Path</code>，往其中新建一条<code>%MAVEN_HOME%\bin</code>(注意，只有较高版本的Windows系统才会有这种把每一条path分开的人性化设置界面，旧版本系统<strong>请在已有的Path后添加<code>%MAVEN_HOME%\bin</code></strong>)</p>
+<p><img src="/2020/03/29/%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/../%E5%88%A9%E7%94%A8IDEA%E4%B8%8EMaven%E7%AE%80%E5%8C%96%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/image-20200507211600006.png" alt="image-20200507211600006"></p>
+</li>
+<li><p>确定保存即可，以后再terminal中即可直接输入mvn</p>
+</li>
+</ul>
+<h3 id="2-我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？"><a href="#2-我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？" class="headerlink" title="2. 我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？"></a>2. 我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？</h3><p>这种情况一般是因为依赖文件没有成功拖下来，请尝试点击<code>Maven</code>的<code>Reimport</code>按钮，并检查依赖所在的依赖仓库是否正确的添加进<code>pom.xml</code>中，如果都没有问题</p>
+<p><strong>请务必使用代理</strong></p>
+<p>我之前没有弄代理的时候十有八九会出现这种情况，<code>Reimport</code>之后不管等多久，那个条就是跑不完，或者干脆没有进度条，直接就全是红色波浪线，绝大多数都是因为网络质量带来的问题，再说一遍，内地用户请务必使用代理</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MineCraft/" rel="tag"># MineCraft</a>
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/IDE/" rel="tag"># IDE</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/04/CPPStudy/" rel="prev" title="CPPStudy">
+      <i class="fa fa-chevron-left"></i> CPPStudy
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/08/mc-PAPIJS/" rel="next" title="PAPI-JavaScript扩展">
+      PAPI-JavaScript扩展 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8IntelliJ-IDEA-amp-Maven%E5%BC%80%E5%8F%91%E6%8F%92%E4%BB%B6"><span class="nav-text">使用IntelliJ IDEA&amp;Maven开发插件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%89%8D%E8%A8%80"><span class="nav-text">一、前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">1. 注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AFIDEA%EF%BC%9F"><span class="nav-text">2.什么是IDEA？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BB%80%E4%B9%88%E6%98%AFMaven%EF%BC%9F"><span class="nav-text">3.什么是Maven？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81Maven%EF%BC%9F"><span class="nav-text">4.为什么我们需要Maven？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%B8%8B%E8%BD%BDIDEA"><span class="nav-text">二、下载IDEA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-text">三、创建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81IDEA-amp-Maven%E4%BB%A3%E7%90%86%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-text">四、IDEA&amp;Maven代理的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-IDEA%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE"><span class="nav-text">1. IDEA代理配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Maven%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE"><span class="nav-text">2.Maven代理配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81Maven%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-text">五、Maven的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-0-%E6%89%93%E5%BC%80pom-xml"><span class="nav-text">Step 0. 打开pom.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-%E8%AE%BE%E7%BD%AEJava%E6%BA%90%E4%BB%A3%E7%A0%81%E7%9A%84%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F%E4%BB%A5%E5%8F%8AJDK%E7%89%88%E6%9C%AC"><span class="nav-text">Step 1. 设置Java源代码的编码方式以及JDK版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-2-%E4%BB%8E%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="nav-text">Step 2. 从远程仓库添加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-3-%E5%AF%BC%E5%85%A5%E6%9C%AC%E5%9C%B0jar%E6%96%87%E4%BB%B6"><span class="nav-text">Step 3. 导入本地jar文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-4-%E4%BD%BF%E7%94%A8Shade%E6%8F%92%E4%BB%B6"><span class="nav-text">Step 4. 使用Shade插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-5-%E5%85%B3%E4%BA%8EScope"><span class="nav-text">Step 5.关于Scope</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AE%9E%E6%88%98%E6%BC%94%E7%A4%BA"><span class="nav-text">六、实战演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E4%B8%80-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E8%87%AA%E5%BB%BA%E6%8F%92%E4%BB%B6"><span class="nav-text">场景一    从零开始自建插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E4%BA%8C-%E4%BD%BF%E7%94%A8%E4%BB%96%E4%BA%BA%E7%9A%84%E6%BA%90%E4%BB%A3%E7%A0%81%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6"><span class="nav-text">场景二    使用他人的源代码编译插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-QuickShop"><span class="nav-text">1. QuickShop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-BungeeCord"><span class="nav-text">2. BungeeCord</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81Q-amp-A"><span class="nav-text">七、Q&amp;A</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E2%80%98mvn%E2%80%99-%E4%B8%8D%E6%98%AF%E5%86%85%E9%83%A8%E6%88%96%E5%A4%96%E9%83%A8%E5%91%BD%E4%BB%A4%EF%BC%8C%E4%B9%9F%E4%B8%8D%E6%98%AF%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%9A%84%E7%A8%8B%E5%BA%8F%E6%88%96%E6%89%B9%E5%A4%84%E7%90%86%E6%96%87%E4%BB%B6"><span class="nav-text">1. ‘mvn’ 不是内部或外部命令，也不是可运行的程序或批处理文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%88%91%E7%9A%84%E4%BE%9D%E8%B5%96%E4%B8%8B%E9%9D%A2%E6%9C%89%E5%A5%BD%E5%A4%9A%E7%BA%A2%E8%89%B2%E7%9A%84%E6%B3%A2%E6%B5%AA%E7%BA%BF%EF%BC%8C%E6%89%93%E5%8C%85%E4%B9%9F%E6%89%93%E5%8C%85%E4%B8%8D%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-text">2. 我的依赖下面有好多红色的波浪线，打包也打包不了怎么办？</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Ruby</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ruby</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

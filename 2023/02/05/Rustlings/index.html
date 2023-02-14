@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.go2mc.net","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Rustlings随记看完了Rust入门书籍《The Rust Programming Language》，发现官方还提供了一个由小练习构成的项目rustlings，于是拿来练练手。大部分内容都比较简单，看过一遍书的话应该都能很容易做出来，这里只记录一些我觉得有意思的东西">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rustlings随记">
+<meta property="og:url" content="https://blog.go2mc.net/2023/02/05/Rustlings/index.html">
+<meta property="og:site_name" content="Ruby&#39;s Blog">
+<meta property="og:description" content="Rustlings随记看完了Rust入门书籍《The Rust Programming Language》，发现官方还提供了一个由小练习构成的项目rustlings，于是拿来练练手。大部分内容都比较简单，看过一遍书的话应该都能很容易做出来，这里只记录一些我觉得有意思的东西">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-05T12:11:48.000Z">
+<meta property="article:modified_time" content="2023-02-14T14:49:30.223Z">
+<meta property="article:author" content="Ruby">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://blog.go2mc.net/2023/02/05/Rustlings/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Rustlings随记 | Ruby's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ruby's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">In solitude, where we are least alone.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.go2mc.net/2023/02/05/Rustlings/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ruby">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ruby's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rustlings随记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-05 12:11:48" itemprop="dateCreated datePublished" datetime="2023-02-05T12:11:48+00:00">2023-02-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-14 14:49:30" itemprop="dateModified" datetime="2023-02-14T14:49:30+00:00">2023-02-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming-Language/" itemprop="url" rel="index"><span itemprop="name">Programming Language</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Rustlings随记"><a href="#Rustlings随记" class="headerlink" title="Rustlings随记"></a>Rustlings随记</h1><p>看完了Rust入门书籍<a target="_blank" rel="noopener" href="https://doc.rust-lang.org/book/">《The Rust Programming Language》</a>，发现官方还提供了一个由小练习构成的项目<a target="_blank" rel="noopener" href="https://github.com/rust-lang/rustlings/">rustlings</a>，于是拿来练练手。大部分内容都比较简单，看过一遍书的话应该都能很容易做出来，这里只记录一些我觉得有意思的东西</p>
+<span id="more"></span>
+
+<h2 id="VARIABLES"><a href="#VARIABLES" class="headerlink" title="VARIABLES"></a>VARIABLES</h2><p><em>variables6.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> NUMBER: <span class="type">i32</span> = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Number &#123;&#125;&quot;</span>, NUMBER);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用const关键字声明constants常量时必须同时声明类型</p>
+<h2 id="PRIMITIVE-TYPES"><a href="#PRIMITIVE-TYPES" class="headerlink" title="PRIMITIVE_TYPES"></a>PRIMITIVE_TYPES</h2><p>这一章很多内容都可以通过rust的自动类型推断完成，不用显式声明  </p>
+<p><em>primitive_types3.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// primitive_types3.rs</span></span><br><span class="line"><span class="comment">// Create an array with at least 100 elements in it where the ??? is.</span></span><br><span class="line"><span class="comment">// Execute `rustlings hint primitive_types3` or use the `hint` watch subcommand for a hint.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">1</span>; <span class="number">100</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> a.<span class="title function_ invoke__">len</span>() &gt;= <span class="number">100</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Wow, that&#x27;s a big array!&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Meh, I eat arrays like that for breakfast.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>声明栈上定长数组的语法，不是很常用，容易忘</p>
+<h2 id="VECS"><a href="#VECS" class="headerlink" title="VECS"></a>VECS</h2><p><em>vecs1.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//--snip--</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">array_and_vec</span>() <span class="punctuation">-&gt;</span> ([<span class="type">i32</span>; <span class="number">4</span>], <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>]; <span class="comment">// a plain array</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">from</span>(a);<span class="comment">// <span class="doctag">TODO:</span> declare your vector here with the macro for vectors</span></span><br><span class="line"></span><br><span class="line">    (a, v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//--snip--</span></span><br></pre></td></tr></table></figure>
+<p>这里使用<code>Vec::from</code>可以直接把已有数组转为Vec  </p>
+<p><em>vecs2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//--snip--</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">vec_map</span>(v: &amp;<span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">    v.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">map</span>(|num| &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Do the same thing as above - but instead of mutating the</span></span><br><span class="line">        <span class="comment">// Vec, you can just return the new number!</span></span><br><span class="line">        <span class="number">2</span> * num</span><br><span class="line">    &#125;).<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//--snip--</span></span><br></pre></td></tr></table></figure>
+<p><code>vec_map</code>对v的迭代器使用map生成一个新的迭代器，并对新迭代器调用collect生成一个新的vec</p>
+<h2 id="MOVE-SEMANTICS"><a href="#MOVE-SEMANTICS" class="headerlink" title="MOVE_SEMANTICS"></a>MOVE_SEMANTICS</h2><p>变量是某块内存区域的owner，变量是否可变只与变量本身有关，与内存区域无关，当发生move导致内存区域的owner变更时，如果旧owner不可变，可以让新的owner可变进而修改内存区域，e.g.<br><em>move_semantics3.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// move_semantics3.rs</span></span><br><span class="line"><span class="comment">// Make me compile without adding new lines-- just changing existing lines!</span></span><br><span class="line"><span class="comment">// (no lines with multiple semicolons necessary!)</span></span><br><span class="line"><span class="comment">// Execute `rustlings hint move_semantics3` or use the `hint` watch subcommand for a hint.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">vec0</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">vec1</span> = <span class="title function_ invoke__">fill_vec</span>(vec0);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125; has length &#123;&#125; content `&#123;:?&#125;`&quot;</span>, <span class="string">&quot;vec1&quot;</span>, vec1.<span class="title function_ invoke__">len</span>(), vec1);</span><br><span class="line"></span><br><span class="line">    vec1.<span class="title function_ invoke__">push</span>(<span class="number">88</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125; has length &#123;&#125; content `&#123;:?&#125;`&quot;</span>, <span class="string">&quot;vec1&quot;</span>, vec1.<span class="title function_ invoke__">len</span>(), vec1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用mut，在发生move时指定新owner-vec是可变的</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">fill_vec</span>(<span class="keyword">mut</span> vec: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">    vec.<span class="title function_ invoke__">push</span>(<span class="number">22</span>);</span><br><span class="line">    vec.<span class="title function_ invoke__">push</span>(<span class="number">44</span>);</span><br><span class="line">    vec.<span class="title function_ invoke__">push</span>(<span class="number">66</span>);</span><br><span class="line"></span><br><span class="line">    vec</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="STRUCTS"><a href="#STRUCTS" class="headerlink" title="STRUCTS"></a>STRUCTS</h2><p><em>structs2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//--snip--</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">order_template</span> = <span class="title function_ invoke__">create_order_template</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">your_order</span> = Order &#123;</span><br><span class="line">    name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Hacker in Rust&quot;</span>),</span><br><span class="line">    count: <span class="number">1</span>,</span><br><span class="line">    ..order_template</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//--snip--</span></span><br></pre></td></tr></table></figure>
+<p>使用现有struct对象初始化新的struct对象，需要注意的是没有实现<code>Copy trait</code>的成员将会被move，同时旧struct会失效。本例中<code>Order</code>仅<code>name</code>字段为<code>String</code>，没有实现<code>Copy trait</code>，但是新的变量中给定了新的<code>name</code>，因此不会发生move，旧<code>order_template</code>仍可用。假如没有给定新的<code>name</code>，那么<code>order_template</code>中的<code>name</code>会move到新变量中，同时导致自身不可用</p>
+<h2 id="ENUMS"><a href="#ENUMS" class="headerlink" title="ENUMS"></a>ENUMS</h2><p><em>enums2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Message</span> &#123;</span><br><span class="line">    Move &#123; x: <span class="type">i32</span>, y: <span class="type">i32</span> &#125;,</span><br><span class="line">    <span class="title function_ invoke__">Echo</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">ChangeColor</span>(<span class="type">u32</span>, <span class="type">u32</span>, <span class="type">u32</span>),</span><br><span class="line">    Quit,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>enum可以携带struct、匿名struct、tuple</p>
+<h2 id="STRINGS"><a href="#STRINGS" class="headerlink" title="STRINGS"></a>STRINGS</h2><p><em>strings3.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">compose_me</span>(input: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">    <span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125; world!&quot;</span>, input)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>format!</code> marco，一个好用但是我经常忘了用的东西(  </p>
+<h2 id="HASHMAPS"><a href="#HASHMAPS" class="headerlink" title="HASHMAPS"></a>HASHMAPS</h2><p>这里主要注意使用hashmap的entry方法，可以在值不存在的情况下才插入值</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">text</span> = <span class="string">&quot;hello world wonderful world&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">map</span> = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">word</span> <span class="keyword">in</span> text.<span class="title function_ invoke__">split_whitespace</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">count</span> = map.<span class="title function_ invoke__">entry</span>(word).<span class="title function_ invoke__">or_insert</span>(<span class="number">0</span>);</span><br><span class="line">        *count += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="OPTIONS"><a href="#OPTIONS" class="headerlink" title="OPTIONS"></a>OPTIONS</h2><p><em>options2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">layered_option</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">range</span> = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">optional_integers</span>: <span class="type">Vec</span>&lt;<span class="type">Option</span>&lt;<span class="type">i8</span>&gt;&gt; = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..(range + <span class="number">1</span>) &#123;</span><br><span class="line">        optional_integers.<span class="title function_ invoke__">push</span>(<span class="title function_ invoke__">Some</span>(i));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> make this a while let statement - remember that vector.pop also adds another layer of Option&lt;T&gt;</span></span><br><span class="line">    <span class="comment">// You can stack `Option&lt;T&gt;`&#x27;s into while let and if let</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">let</span> <span class="variable">Some</span>(<span class="title function_ invoke__">Some</span>(integer)) = optional_integers.<span class="title function_ invoke__">pop</span>() &#123;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(integer, range);</span><br><span class="line">        range -= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>while let语法，refutable let的一种用法  </p>
+<p><em>options3.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span>: <span class="type">Option</span>&lt;Point&gt; = <span class="title function_ invoke__">Some</span>(Point &#123; x: <span class="number">100</span>, y: <span class="number">200</span> &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> y &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(<span class="keyword">ref</span> p) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;Co-ordinates are &#123;&#125;,&#123;&#125; &quot;</span>, p.x, p.y),</span><br><span class="line">        _ =&gt; <span class="built_in">println!</span>(<span class="string">&quot;no match&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">    y; <span class="comment">// Fix without deleting this line.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>match pattern中使用ref，只获取引用不夺取所有权</p>
+<h2 id="ERRORS"><a href="#ERRORS" class="headerlink" title="ERRORS"></a>ERRORS</h2><p><em>errors6.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">ParsePosNonzeroError</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from_creation</span>(err: CreationError) <span class="punctuation">-&gt;</span> ParsePosNonzeroError &#123;</span><br><span class="line">        ParsePosNonzeroError::<span class="title function_ invoke__">Creation</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// fn from_parseint...</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">from_parseint</span>(err: ParseIntError) <span class="punctuation">-&gt;</span> ParsePosNonzeroError &#123;</span><br><span class="line">        ParsePosNonzeroError::<span class="title function_ invoke__">ParseInt</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">parse_pos_nonzero</span>(s: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;PositiveNonzeroInteger, ParsePosNonzeroError&gt; &#123;</span><br><span class="line">    <span class="comment">// when `parse()` returns an error.</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span>: <span class="type">i64</span> = s.<span class="title function_ invoke__">parse</span>().<span class="title function_ invoke__">map_err</span>(ParsePosNonzeroError::from_parseint)?;</span><br><span class="line">    PositiveNonzeroInteger::<span class="title function_ invoke__">new</span>(x).<span class="title function_ invoke__">map_err</span>(ParsePosNonzeroError::from_creation)</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">Result</span>`的`map_err`方法可以将err映射为新的类型，即把`<span class="type">Result</span>&lt;T, E&gt;`转化为`<span class="type">Result</span>&lt;T, O&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="TRAITS"><a href="#TRAITS" class="headerlink" title="TRAITS"></a>TRAITS</h2><p><em>traits2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">trait</span> <span class="title class_">AppendBar</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">append_bar</span>(<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">AppendBar</span> <span class="keyword">for</span> <span class="title class_">Vec</span>&lt;<span class="type">String</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">append_bar</span>(<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">push</span>(<span class="string">&quot;Bar&quot;</span>.<span class="title function_ invoke__">into</span>());</span><br><span class="line">        <span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接take owner时，是否添加mut不影响参数的匹配，上述impl是允许的，但是<code>&amp;self</code>与<code>&amp;mut self</code>是不能匹配的</p>
+<h2 id="STANDARD-LIBRARY-TYPES"><a href="#STANDARD-LIBRARY-TYPES" class="headerlink" title="STANDARD_LIBRARY_TYPES"></a>STANDARD_LIBRARY_TYPES</h2><p><em>iterators1.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span> () &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">my_fav_fruits</span> = <span class="built_in">vec!</span>[<span class="string">&quot;banana&quot;</span>, <span class="string">&quot;custard apple&quot;</span>, <span class="string">&quot;avocado&quot;</span>, <span class="string">&quot;peach&quot;</span>, <span class="string">&quot;raspberry&quot;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">my_iterable_fav_fruits</span> = my_fav_fruits.<span class="title function_ invoke__">iter</span>();   <span class="comment">// <span class="doctag">TODO:</span> Step 1</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(my_iterable_fav_fruits.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="string">&quot;banana&quot;</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(my_iterable_fav_fruits.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="string">&quot;custard apple&quot;</span>));     <span class="comment">// <span class="doctag">TODO:</span> Step 2</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(my_iterable_fav_fruits.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="string">&quot;avocado&quot;</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(my_iterable_fav_fruits.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="string">&quot;peach&quot;</span>));     <span class="comment">// <span class="doctag">TODO:</span> Step 3</span></span><br><span class="line">    <span class="built_in">assert_eq!</span>(my_iterable_fav_fruits.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="string">&quot;raspberry&quot;</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(my_iterable_fav_fruits.<span class="title function_ invoke__">next</span>(), <span class="literal">None</span>);     <span class="comment">// <span class="doctag">TODO:</span> Step 4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里next()返回的值类型值得注意一下，Iter&lt;&amp;str&gt;返回的值类型应为Option&lt;&amp;&amp;str&gt;  </p>
+<p><em>iterator2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Step 2.</span></span><br><span class="line"><span class="comment">// Apply the `capitalize_first` function to a slice of string slices.</span></span><br><span class="line"><span class="comment">// Return a vector of strings.</span></span><br><span class="line"><span class="comment">// [&quot;hello&quot;, &quot;world&quot;] -&gt; [&quot;Hello&quot;, &quot;World&quot;]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">capitalize_words_vector</span>(words: &amp;[&amp;<span class="type">str</span>]) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">String</span>&gt; &#123;</span><br><span class="line">    words.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">map</span>(|<span class="type">str</span>| <span class="title function_ invoke__">capitalize_first</span>(<span class="type">str</span>)).<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Step 3.</span></span><br><span class="line"><span class="comment">// Apply the `capitalize_first` function again to a slice of string slices.</span></span><br><span class="line"><span class="comment">// Return a single string.</span></span><br><span class="line"><span class="comment">// [&quot;hello&quot;, &quot; &quot;, &quot;world&quot;] -&gt; &quot;Hello World&quot;</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">capitalize_words_string</span>(words: &amp;[&amp;<span class="type">str</span>]) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">    words.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">map</span>(|<span class="type">str</span>| <span class="title function_ invoke__">capitalize_first</span>(<span class="type">str</span>)).<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面是我给出的答案，step2和step3完全一样，collect根据外部函数返回值的类型判断应该是用哪一个泛型，还可以通过step2的结果进行join或者collect<br>collect方案</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">capitalize_words_string</span>(words: &amp;[&amp;<span class="type">str</span>]) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">capitalize_words_vector</span>(words).<span class="title function_ invoke__">into_iter</span>().<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要使用into_iter，collect只能将<code>Iterator&lt;Item=String&gt;</code>转化为String，而<code>Iterator&lt;Item=&amp;String&gt;</code>不行<br>join方案</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">capitalize_words_string</span>(words: &amp;[&amp;<span class="type">str</span>]) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">capitalize_words_vector</span>(words).<span class="title function_ invoke__">join</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>iterator3.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">result_with_list</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;, DivisionError&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">27</span>, <span class="number">297</span>, <span class="number">38502</span>, <span class="number">81</span>];</span><br><span class="line">    numbers.<span class="title function_ invoke__">into_iter</span>().<span class="title function_ invoke__">map</span>(|n| <span class="title function_ invoke__">divide</span>(n, <span class="number">27</span>)).<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Vec&lt;Result&lt;T, E&gt;&gt;</code>可以通过迭代器以及collect方法生成<code>Result&lt;Vec&lt;T&gt;, E&gt;</code>，如果前者中含有Err，则collect会返回第一个Err  </p>
+<p><em>iterator4.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">factorial</span>(num: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">    (<span class="number">1</span>..=num).<span class="title function_ invoke__">product</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>hint给出的方法是使用fold()或rfold()，但rust后续版本中推出了product方法，获取所有元素的累乘积。除了fold外，还可以使用reduce，e.g.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// using fold()</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">factorial</span>(num: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">    (<span class="number">1</span>..=num).<span class="title function_ invoke__">fold</span>(<span class="number">1</span>, |fac, num| fac * num)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// using reduce</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">factorial</span>(num: <span class="type">u64</span>) <span class="punctuation">-&gt;</span> <span class="type">u64</span> &#123;</span><br><span class="line">    (<span class="number">1</span>..=num).<span class="title function_ invoke__">reduce</span>(|x, y| x * y).<span class="title function_ invoke__">unwrap_or</span>(<span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="CONVERSIONS"><a href="#CONVERSIONS" class="headerlink" title="CONVERSIONS"></a>CONVERSIONS</h2><p><em>try_from_into</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">try_from</span>(tuple: (<span class="type">i16</span>, <span class="type">i16</span>, <span class="type">i16</span>)) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="keyword">Self</span>, <span class="keyword">Self</span>::Error&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> (red, green, blue) = tuple;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">if</span> [red, green, blue].<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">any</span>(|color| !(<span class="number">0</span>..=<span class="number">255</span>).<span class="title function_ invoke__">contains</span>(color)) &#123;</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(IntoColorError::IntConversion)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(Color &#123;</span><br><span class="line">            red: red <span class="keyword">as</span> <span class="type">u8</span>,</span><br><span class="line">            green: green <span class="keyword">as</span> <span class="type">u8</span>,</span><br><span class="line">            blue: blue <span class="keyword">as</span> <span class="type">u8</span>,</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这个是👴🏻本来的答案，但是hint这么说</p>
+<blockquote>
+<p>Is there an implementation of <code>TryFrom</code> in the standard library that<br>can both do the required integer conversion and check the range of the input?</p>
+</blockquote>
+<p>于是👴🏻对代码进行了修改，使用了<code>try_into</code>将<code>i16</code>转化为<code>u8</code>，并且使用<code>map_err</code>调整<code>Result</code>的类型以便使用<code>?</code>操作符，但是代码看起来更💩了是怎么回事呢，感觉不如上面那个好懂</p>
+<p>另外在这里出现了一个问题，就是rust-analyzer和rustc对map中color的类型判断不同，rustc不过编译，在rust论坛上发帖问了一下找到了问题所在，是因为rustlings在编译时没有指定edition，默认edition是2018，但是rustlings生成的rust-analyzer配置文件指定edition为2021，这两个版本中[i16; 3]的into_iter行为不一样，具体原理我还没研究明白，这里先把论坛大佬的<a target="_blank" rel="noopener" href="https://users.rust-lang.org/t/rust-analyzer-and-cargo-give-different-type-inferences-for-the-same-code/88790/2?u=wjwrh">回答链接</a>贴在这里，等我研究明白了再水一篇blog((</p>
+<blockquote>
+<p>edit: 研究了一下，其实也没啥特别的，就是在早期Rust版本中，只有arrays的引用实现了<code>IntoIterator</code>，由于Rust自动引用与解引用的特性，调用<code>array.into_iter()</code>会解析为<code>(&amp;array).into_iter()</code>，使用map获取到的类型自然成为了对array中存储类型的引用</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">TryFrom</span>&lt;[<span class="type">i16</span>; <span class="number">3</span>]&gt; <span class="keyword">for</span> <span class="title class_">Color</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Error</span> = IntoColorError;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">try_from</span>(arr: [<span class="type">i16</span>; <span class="number">3</span>]) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;<span class="keyword">Self</span>, <span class="keyword">Self</span>::Error&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">color</span> = arr</span><br><span class="line">            .<span class="title function_ invoke__">into_iter</span>()</span><br><span class="line">            .<span class="title function_ invoke__">map</span>(|color| &#123;</span><br><span class="line">                color	<span class="comment">// work in edition 2021</span></span><br><span class="line">                    .<span class="title function_ invoke__">try_into</span>()</span><br><span class="line">                    .<span class="title function_ invoke__">map_err</span>(|_| IntoColorError::IntConversion)</span><br><span class="line">            &#125;)</span><br><span class="line">            .collect::&lt;<span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;, IntoColorError&gt;&gt;()?;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(Color &#123;</span><br><span class="line">            red: color[<span class="number">0</span>],</span><br><span class="line">            green: color[<span class="number">1</span>],</span><br><span class="line">            blue: color[<span class="number">2</span>],</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="QUIZ"><a href="#QUIZ" class="headerlink" title="QUIZ"></a>QUIZ</h2><p><em>quiz1.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// quiz1.rs</span></span><br><span class="line"><span class="comment">// This is a quiz for the following sections:</span></span><br><span class="line"><span class="comment">// - Variables</span></span><br><span class="line"><span class="comment">// - Functions</span></span><br><span class="line"><span class="comment">// - If</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Mary is buying apples. The price of an apple is calculated as follows:</span></span><br><span class="line"><span class="comment">// - An apple costs 2 rustbucks.</span></span><br><span class="line"><span class="comment">// - If Mary buys more than 40 apples, each apple only costs 1 rustbuck!</span></span><br><span class="line"><span class="comment">// Write a function that calculates the price of an order of apples given</span></span><br><span class="line"><span class="comment">// the quantity bought. No hints this time!</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Put your function here!</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">calculate_price_of_apples</span>(amount: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> amount &gt; <span class="number">40</span> &#123;</span><br><span class="line">        amount</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="number">2</span> * amount</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Don&#x27;t modify this function!</span></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">verify_test</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">price1</span> = <span class="title function_ invoke__">calculate_price_of_apples</span>(<span class="number">35</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">price2</span> = <span class="title function_ invoke__">calculate_price_of_apples</span>(<span class="number">40</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">price3</span> = <span class="title function_ invoke__">calculate_price_of_apples</span>(<span class="number">41</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">price4</span> = <span class="title function_ invoke__">calculate_price_of_apples</span>(<span class="number">65</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="number">70</span>, price1);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="number">80</span>, price2);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="number">41</span>, price3);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(<span class="number">65</span>, price4);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实也没什么好说的，运用一下前几章的知识  </p>
+<p><em>quiz2.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// quiz2.rs</span></span><br><span class="line"><span class="comment">// This is a quiz for the following sections:</span></span><br><span class="line"><span class="comment">// - Strings</span></span><br><span class="line"><span class="comment">// - Vecs</span></span><br><span class="line"><span class="comment">// - Move semantics</span></span><br><span class="line"><span class="comment">// - Modules</span></span><br><span class="line"><span class="comment">// - Enums</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Let&#x27;s build a little machine in form of a function.</span></span><br><span class="line"><span class="comment">// As input, we&#x27;re going to give a list of strings and commands. These commands</span></span><br><span class="line"><span class="comment">// determine what action is going to be applied to the string. It can either be:</span></span><br><span class="line"><span class="comment">// - Uppercase the string</span></span><br><span class="line"><span class="comment">// - Trim the string</span></span><br><span class="line"><span class="comment">// - Append &quot;bar&quot; to the string a specified amount of times</span></span><br><span class="line"><span class="comment">// The exact form of this will be:</span></span><br><span class="line"><span class="comment">// - The input is going to be a Vector of a 2-length tuple,</span></span><br><span class="line"><span class="comment">//   the first element is the string, the second one is the command.</span></span><br><span class="line"><span class="comment">// - The output element is going to be a Vector of strings.</span></span><br><span class="line"><span class="comment">// No hints this time!</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Command</span> &#123;</span><br><span class="line">    Uppercase,</span><br><span class="line">    Trim,</span><br><span class="line">    <span class="title function_ invoke__">Append</span>(<span class="type">usize</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">mod</span> my_module &#123;</span><br><span class="line">    <span class="keyword">use</span> super::Command;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> Complete the function signature!</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">transformer</span>(input: <span class="type">Vec</span>&lt;(<span class="type">String</span>, Command)&gt;) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">String</span>&gt; &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Complete the output declaration!</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">output</span> = <span class="built_in">vec!</span>[];</span><br><span class="line">        <span class="title function_ invoke__">for</span> (string, command) <span class="keyword">in</span> input.<span class="title function_ invoke__">iter</span>() &#123;</span><br><span class="line">            <span class="keyword">match</span> command &#123;</span><br><span class="line">                Command::Uppercase =&gt; output.<span class="title function_ invoke__">push</span>(string.<span class="title function_ invoke__">to_uppercase</span>()),</span><br><span class="line">                Command::Trim =&gt; output.<span class="title function_ invoke__">push</span>(string.<span class="title function_ invoke__">trim</span>().<span class="title function_ invoke__">into</span>()),</span><br><span class="line">                Command::<span class="title function_ invoke__">Append</span>(time) =&gt; output.<span class="title function_ invoke__">push</span>(<span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125;&#123;&#125;&quot;</span>, string, <span class="string">&quot;bar&quot;</span>.<span class="title function_ invoke__">repeat</span>(*time))),</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        output</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> What do we need to import to have `transformer` in scope?</span></span><br><span class="line">    <span class="keyword">use</span> super::my_module::transformer;</span><br><span class="line">    <span class="keyword">use</span> super::Command;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">it_works</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">output</span> = <span class="title function_ invoke__">transformer</span>(<span class="built_in">vec!</span>[</span><br><span class="line">            (<span class="string">&quot;hello&quot;</span>.<span class="title function_ invoke__">into</span>(), Command::Uppercase),</span><br><span class="line">            (<span class="string">&quot; all roads lead to rome! &quot;</span>.<span class="title function_ invoke__">into</span>(), Command::Trim),</span><br><span class="line">            (<span class="string">&quot;foo&quot;</span>.<span class="title function_ invoke__">into</span>(), Command::<span class="title function_ invoke__">Append</span>(<span class="number">1</span>)),</span><br><span class="line">            (<span class="string">&quot;bar&quot;</span>.<span class="title function_ invoke__">into</span>(), Command::<span class="title function_ invoke__">Append</span>(<span class="number">5</span>)),</span><br><span class="line">        ]);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(output[<span class="number">0</span>], <span class="string">&quot;HELLO&quot;</span>);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(output[<span class="number">1</span>], <span class="string">&quot;all roads lead to rome!&quot;</span>);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(output[<span class="number">2</span>], <span class="string">&quot;foobar&quot;</span>);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(output[<span class="number">3</span>], <span class="string">&quot;barbarbarbarbarbar&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>String</code>、<code>str</code>有个repeat方法可以重复字符串指定次数  </p>
+<p><em>quiz3.rs</em></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// quiz3.rs</span></span><br><span class="line"><span class="comment">// This quiz tests:</span></span><br><span class="line"><span class="comment">// - Generics</span></span><br><span class="line"><span class="comment">// - Traits</span></span><br><span class="line"><span class="comment">// An imaginary magical school has a new report card generation system written in Rust!</span></span><br><span class="line"><span class="comment">// Currently the system only supports creating report cards where the student&#x27;s grade</span></span><br><span class="line"><span class="comment">// is represented numerically (e.g. 1.0 -&gt; 5.5).</span></span><br><span class="line"><span class="comment">// However, the school also issues alphabetical grades (A+ -&gt; F-) and needs</span></span><br><span class="line"><span class="comment">// to be able to print both types of report card!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Make the necessary code changes in the struct ReportCard and the impl block</span></span><br><span class="line"><span class="comment">// to support alphabetical report cards. Change the Grade in the second test to &quot;A+&quot;</span></span><br><span class="line"><span class="comment">// to show that your changes allow alphabetical grades.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::fmt::Display;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">ReportCard</span>&lt;T: Display&gt; &#123;</span><br><span class="line">    <span class="keyword">pub</span> grade: T,</span><br><span class="line">    <span class="keyword">pub</span> student_name: <span class="type">String</span>,</span><br><span class="line">    <span class="keyword">pub</span> student_age: <span class="type">u8</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span>&lt;T: Display&gt; ReportCard&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">print</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">        <span class="built_in">format!</span>(<span class="string">&quot;&#123;&#125; (&#123;&#125;) - achieved a grade of &#123;&#125;&quot;</span>,</span><br><span class="line">            &amp;<span class="keyword">self</span>.student_name, &amp;<span class="keyword">self</span>.student_age, &amp;<span class="keyword">self</span>.grade)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="keyword">use</span> super::*;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">generate_numeric_report_card</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">report_card</span> = ReportCard &#123;</span><br><span class="line">            grade: <span class="number">2.1</span>,</span><br><span class="line">            student_name: <span class="string">&quot;Tom Wriggle&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">            student_age: <span class="number">12</span>,</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(</span><br><span class="line">            report_card.<span class="title function_ invoke__">print</span>(),</span><br><span class="line">            <span class="string">&quot;Tom Wriggle (12) - achieved a grade of 2.1&quot;</span></span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">generate_alphabetic_report_card</span>() &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Make sure to change the grade here after you finish the exercise.</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">report_card</span> = ReportCard &#123;</span><br><span class="line">            grade: <span class="string">&quot;A+&quot;</span>,</span><br><span class="line">            student_name: <span class="string">&quot;Gary Plotter&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">            student_age: <span class="number">11</span>,</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="built_in">assert_eq!</span>(</span><br><span class="line">            report_card.<span class="title function_ invoke__">print</span>(),</span><br><span class="line">            <span class="string">&quot;Gary Plotter (11) - achieved a grade of A+&quot;</span></span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Rust/" rel="tag"># Rust</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/02/04/RustAssociatedTypes/" rel="prev" title="Associated Types & Generics">
+      <i class="fa fa-chevron-left"></i> Associated Types & Generics
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Rustlings%E9%9A%8F%E8%AE%B0"><span class="nav-text">Rustlings随记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#VARIABLES"><span class="nav-text">VARIABLES</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PRIMITIVE-TYPES"><span class="nav-text">PRIMITIVE_TYPES</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VECS"><span class="nav-text">VECS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MOVE-SEMANTICS"><span class="nav-text">MOVE_SEMANTICS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#STRUCTS"><span class="nav-text">STRUCTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ENUMS"><span class="nav-text">ENUMS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#STRINGS"><span class="nav-text">STRINGS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HASHMAPS"><span class="nav-text">HASHMAPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OPTIONS"><span class="nav-text">OPTIONS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ERRORS"><span class="nav-text">ERRORS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TRAITS"><span class="nav-text">TRAITS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#STANDARD-LIBRARY-TYPES"><span class="nav-text">STANDARD_LIBRARY_TYPES</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONVERSIONS"><span class="nav-text">CONVERSIONS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QUIZ"><span class="nav-text">QUIZ</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Ruby</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ruby</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
