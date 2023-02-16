@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"blog.go2mc.net","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="这是刚刚开始学Rust时记录的，啥都给记下来了，后来感觉这种笔记点太多，很杂很偏，都不一定用得到，学习效率很低，不如有需要的时候再查。于是后面半本书就没记了  Rust-learning note1. Getting Started环境搭建Windows下rustup-init一把梭，没碰到什么问题 后期可以直接使用指令rustup update升级 CargoRust是编译型语言，官方提供了一">
+  <meta name="description" content="这是刚刚开始学Rust时记录的，啥都给记下来了，后来感觉这种笔记点太多，很杂很偏，都不一定用得到，学习效率很低，不如有需要的时候再查。于是后面半本书就没记了  Rust-learning note1. Getting Started环境搭建Windows下rustup-init一把梭，没碰到什么问题 后期可以直接使用指令rustup update升级">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rust学习杂记">
 <meta property="og:url" content="https://blog.go2mc.net/2022/12/05/RustNote/index.html">
 <meta property="og:site_name" content="Ruby&#39;s Blog">
-<meta property="og:description" content="这是刚刚开始学Rust时记录的，啥都给记下来了，后来感觉这种笔记点太多，很杂很偏，都不一定用得到，学习效率很低，不如有需要的时候再查。于是后面半本书就没记了  Rust-learning note1. Getting Started环境搭建Windows下rustup-init一把梭，没碰到什么问题 后期可以直接使用指令rustup update升级 CargoRust是编译型语言，官方提供了一">
+<meta property="og:description" content="这是刚刚开始学Rust时记录的，啥都给记下来了，后来感觉这种笔记点太多，很杂很偏，都不一定用得到，学习效率很低，不如有需要的时候再查。于是后面半本书就没记了  Rust-learning note1. Getting Started环境搭建Windows下rustup-init一把梭，没碰到什么问题 后期可以直接使用指令rustup update升级">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog.go2mc.net/2022/12/05/.note_assest/Code_pM3vpcgVbg.png">
 <meta property="og:image" content="https://blog.go2mc.net/2022/12/05/note.assets/image-20221202160141439.png">
@@ -213,6 +213,7 @@
 </blockquote>
 <h1 id="Rust-learning-note"><a href="#Rust-learning-note" class="headerlink" title="Rust-learning note"></a>Rust-learning note</h1><h2 id="1-Getting-Started"><a href="#1-Getting-Started" class="headerlink" title="1. Getting Started"></a>1. Getting Started</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>Windows下rustup-init一把梭，没碰到什么问题</p>
 <p>后期可以直接使用指令<code>rustup update</code>升级</p>
+<span id="more"></span>
 <h3 id="Cargo"><a href="#Cargo" class="headerlink" title="Cargo"></a>Cargo</h3><p>Rust是编译型语言，官方提供了一个名为Cargo的工具用于管理项目(个人感觉跟gradle可能有点像?刚学还不太清楚xd)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cargo new &lt;name&gt;     	 # 同时还会新建同名git仓库</span><br><span class="line">cargo build         	 # 编译项目</span><br><span class="line">cargo run           	 # 运行项目</span><br><span class="line">cargo check         	 # 检查项目是否可以编译，节省编译时间</span><br><span class="line">cargo doc --open   		 # 编译并打开当前所有依赖构成的doc</span><br><span class="line">cargo new &lt;name&gt; --lib 	 #新建库package</span><br></pre></td></tr></table></figure>
 
