@@ -757,7 +757,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Windows-Internal"><a href="#Windows-Internal" class="headerlink" title="Windows Internal"></a>Windows Internal</h1><h2 id="CHAPTER-2-System-architecture"><a href="#CHAPTER-2-System-architecture" class="headerlink" title="CHAPTER 2 System architecture"></a>CHAPTER 2 System architecture</h2><p><img src="/2022/07/12/WindowsInternal/../WindowsInternal/uTools_0igR8j8Mnj.png" alt="uTools_0igR8j8Mnj"></p>
+          <h1 id="Windows-Internal"><a href="#Windows-Internal" class="headerlink" title="Windows Internal"></a>Windows Internal</h1><h2 id="CHAPTER-2-System-architecture"><a href="#CHAPTER-2-System-architecture" class="headerlink" title="CHAPTER 2 System architecture"></a>CHAPTER 2 System architecture</h2><p><img src="/2022/07/12/WindowsInternal/../WindowsInternal/Acrobat_uOCjMD5wZX.png" alt="uTools_0igR8j8Mnj"></p>
 <h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>VTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I/O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。</p>
 <p>VTL 1的secure kernel使用独立的二进制文件securekernel.exe，同时IUM的dll也有所不同，lumdll.dll对应ntdll.dll，lumbase.dll对应Kernelbase.dll</p>
 <h3 id="User-Mode"><a href="#User-Mode" class="headerlink" title="User Mode"></a>User Mode</h3><h4 id="subsystem"><a href="#subsystem" class="headerlink" title="subsystem"></a>subsystem</h4><p>子系统有以下主要构件</p>
