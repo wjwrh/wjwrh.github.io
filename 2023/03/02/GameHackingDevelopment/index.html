@@ -46,7 +46,7 @@
 <meta property="og:image" content="https://blog.go2mc.net/2023/03/02/GameHackingDevelopment/image-20230321104902704.png">
 <meta property="og:image" content="https://blog.go2mc.net/2023/03/02/GameHackingDevelopment/image-20230321161117904.png">
 <meta property="article:published_time" content="2023-03-02T19:19:55.000Z">
-<meta property="article:modified_time" content="2023-03-21T16:04:00.000Z">
+<meta property="article:modified_time" content="2023-03-26T18:49:00.000Z">
 <meta property="article:author" content="Ruby">
 <meta property="article:tag" content="Cheat">
 <meta property="article:tag" content="Development">
@@ -209,7 +209,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-03-21 16:04:00" itemprop="dateModified" datetime="2023-03-21T16:04:00+00:00">2023-03-21</time>
+                <time title="修改时间：2023-03-26 18:49:00" itemprop="dateModified" datetime="2023-03-26T18:49:00+00:00">2023-03-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -248,14 +248,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.7k</span>
+              <span>7.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>24 分钟</span>
+              <span>28 分钟</span>
             </span>
 
         </div>
@@ -590,6 +590,71 @@
 <p><img src="/2023/03/02/GameHackingDevelopment/../GameHackingDevelopment/image-20230321161117904.png" alt="image-20230321161117904"></p>
 <h6 id="使用THIS指针调用-thiscall"><a href="#使用THIS指针调用-thiscall" class="headerlink" title="使用THIS指针调用__thiscall"></a>使用THIS指针调用__thiscall</h6><p>有些函数可能是某些类的成员函数，因此需要传入this指针才能正常调用，之前提到我们可以手动传入this指针到ECX，然后将调用约定设置为<code>__stdcall</code></p>
 <p>因此需要做的就是找到指向类成员的基指针，可以在对应函数里面下断，查看ECX的值，扔进CE的pointer scan里面查找</p>
+<h3 id="Chapter-11-使用之前的研究成果写一个机器人"><a href="#Chapter-11-使用之前的研究成果写一个机器人" class="headerlink" title="Chapter 11: 使用之前的研究成果写一个机器人"></a>Chapter 11: 使用之前的研究成果写一个机器人</h3><p>这一章主要有两个部分</p>
+<ul>
+<li><p>引入状态机的概念实现自动机器人</p>
+<p>这本书里给出的实现与我理解的状态机不太一样，他的实现是，首先将条件与操作绑定起来，例如将”血量低于50”这个条件与”使用大治疗药水”这个操作给绑定起来</p>
+<p>然后将绑定好的一系列组合按照优先级顺序放到一个vector中，不断迭代这个vector，如果有满足条件的则执行对应操作</p>
+<p>vector可以动态修改，增加新条件等</p>
+</li>
+<li><p>寻路算法</p>
+<p>这个没看((，有兴趣的时候再看看 </p>
+</li>
+</ul>
+<h3 id="Chapter-12-保持隐蔽"><a href="#Chapter-12-保持隐蔽" class="headerlink" title="Chapter 12: 保持隐蔽"></a>Chapter 12: 保持隐蔽</h3><p>这一章主要介绍了几个反作弊软件，以及一些绕过他们的技巧 </p>
+<h4 id="常见AntiCheat软件"><a href="#常见AntiCheat软件" class="headerlink" title="常见AntiCheat软件"></a>常见AntiCheat软件</h4><ul>
+<li><p>PunkBuster</p>
+<ul>
+<li>内存SBD(Signature-Based Detection) 扫内存，检测匹配的pattern(很容易误报)，主要是通过若干隐藏线程在用户态调用<code>NtQueryVirtualMemory</code>实现</li>
+<li>截图</li>
+<li>检验游戏关键文件hash(只针对在硬盘上的文件)</li>
+</ul>
+</li>
+<li><p>ESEA Anti-Cheat</p>
+<p>手段与PunkBuster类似，不过很多操作在内核态中完成</p>
+<ul>
+<li><code>MmGetPhysicalMemoryRanges</code></li>
+<li><code>ZwOpenSection</code></li>
+<li><code>ZwMapViewOfSection</code></li>
+</ul>
+</li>
+<li><p>VAC</p>
+<p>手段也基本相似，不过VAC会进行DNS缓存扫描，查看主机是否访问了作弊软件相关的网站</p>
+<p>除此之外VAC还会进行二进制文件验证，它会对内存中游戏的关键字段算hash进行比对</p>
+</li>
+<li><p>GameGuard</p>
+<p>同样使用SBD，并且它同时拥有用户态和内核态功能，hook一系列外挂可能利用的函数</p>
+</li>
+<li><p>Warden</p>
+<p>动态下发代码，这段代码会执行检测任务并且定期向服务器发送心跳包以确保反作弊正在正常运行</p>
+</li>
+</ul>
+<h4 id="小心地管理Bot留下的足迹"><a href="#小心地管理Bot留下的足迹" class="headerlink" title="小心地管理Bot留下的足迹"></a>小心地管理Bot留下的足迹</h4><p>这里大致的说了几点常规思路，Hook尽量少的函数、可以选择Hook Windows API而不是游戏内的函数，给程序加壳，增加反调试功能</p>
+<p>同时书里给出了若干可用的反调试手段</p>
+<ul>
+<li><code>CheckRemoteDebuggerPresent</code> 非常常见也非常容易绕过的反调手段</li>
+<li>通过<code>SEH</code>执行<code>INT 0x2D</code> <code>INT 0x03</code>判断是否有调试器挂载</li>
+<li>检测<code>DR0-DR3</code></li>
+<li>检测<code>OutputDebugString</code>是否会执行出错</li>
+<li>调用时间相关API判断某个操作是否消耗异常多的时间</li>
+<li>检测是否有调试驱动存在</li>
+</ul>
+<h4 id="对抗反作弊"><a href="#对抗反作弊" class="headerlink" title="对抗反作弊"></a>对抗反作弊</h4><ul>
+<li><p>对抗SBD</p>
+<p>仅加壳并不是一个好主意，可以考虑hook掉<code>NtQueryVirtualMemory</code>之类获取内存的函数</p>
+<p>或者考虑修改一些编译选项，以产生具有不同特性的二进制文件，不过如果需要大量分发外挂，这也不是一个长久之计</p>
+</li>
+<li><p>对抗截图</p>
+<p>可以直接hook用于截图的函数；也可以hook在截图之前一定会调用的某个函数，在该函数内短暂的隐藏ui</p>
+</li>
+<li><p>对抗二进制文件校验</p>
+<p>尽量hook Windows API 而不是游戏文件；同样也可以Hook内存查询函数来欺骗反作弊</p>
+</li>
+<li><p>对抗反作弊的Rootkit</p>
+<p>有些反作弊会hook用户态最底层的ntdll.dll中的系统调用函数，例如<code>WriteProcessMemory</code>，可以检测到对游戏进程发起的内存写入，我们可以直接copy一个ntdll.dll，载入新的拷贝再执行</p>
+</li>
+</ul>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>这本书也介绍了不少写外挂的思路吧，尽管我感觉跟目前主流反作弊对抗还有一些差距，不过至少有了一些游戏作弊的设计思路，之后可能会考虑对<code>AssaultCube</code>这种没有反作弊保护的游戏写一下外挂试试</p>
 
     </div>
 
@@ -673,7 +738,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Game-Hacking"><span class="nav-text">Game Hacking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-1-Tools-of-the-Trade"><span class="nav-text">Part 1: Tools of the Trade</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-1-%E4%BD%BF%E7%94%A8CE%E6%89%AB%E6%8F%8F%E5%86%85%E5%AD%98"><span class="nav-text">Chapter 1: 使用CE扫描内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-2-%E4%BD%BF%E7%94%A8OD%E8%B0%83%E8%AF%95%E6%B8%B8%E6%88%8F"><span class="nav-text">Chapter 2: 使用OD调试游戏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OllyDbg%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-text">OllyDbg表达式的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B1%EF%BC%9A%E5%BD%93%E7%89%B9%E5%AE%9A%E7%8E%A9%E5%AE%B6%E5%90%8D%E5%AD%97%E8%A2%AB%E6%89%93%E5%8D%B0%E6%97%B6%E6%9A%82%E5%81%9C%E6%89%A7%E8%A1%8C"><span class="nav-text">例1：当特定玩家名字被打印时暂停执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B2%EF%BC%9A%E5%BD%93%E7%8E%A9%E5%AE%B6%E8%A1%80%E9%87%8F%E4%B8%8B%E9%99%8D%E6%97%B6%E6%9A%82%E5%81%9C%E6%89%A7%E8%A1%8C"><span class="nav-text">例2：当玩家血量下降时暂停执行</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%83%E4%B9%A0%EF%BC%9APATCHING-AN-IF-STATEMENT"><span class="nav-text">小练习：PATCHING AN IF() STATEMENT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-3-%E4%BD%BF%E7%94%A8Process-Monitor%E5%92%8CProcess-Explorer%E8%BF%9B%E8%A1%8C%E4%BE%A6%E5%AF%9F"><span class="nav-text">Chapter 3: 使用Process Monitor和Process Explorer进行侦察</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Process-Monitor"><span class="nav-text">Process Monitor</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%8F%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%BF%AE%E6%94%B9%E6%9C%80%E9%AB%98%E5%88%86%E6%96%87%E4%BB%B6"><span class="nav-text">小练习：修改最高分文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Process-Explorer"><span class="nav-text">Process Explorer</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%8F%E7%BB%83%E4%B9%A0%EF%BC%9A%E5%85%B3%E9%97%ADMutex%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%BC%80"><span class="nav-text">小练习：关闭Mutex实现多开</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-2-Game-Dissection"><span class="nav-text">Part 2: Game Dissection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-4-From-Code-to-Memory-A-General-Primer"><span class="nav-text">Chapter 4: From Code to Memory: A General Primer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">段寄存器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DIV-amp-amp-MUL"><span class="nav-text">DIV&amp;&amp;MUL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">调用约定</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-5-%E9%AB%98%E7%BA%A7%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81"><span class="nav-text">Chapter 5: 高级内存取证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%86%E5%88%AB%E6%B8%B8%E6%88%8F%E4%B8%AD%E5%A4%8D%E6%9D%82%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">识别游戏中复杂的数据结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-6-%E8%AF%BB%E5%86%99%E6%B8%B8%E6%88%8F%E5%86%85%E5%AD%98"><span class="nav-text">Chapter 6: 读写游戏内存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-3-Process-Puppeteering"><span class="nav-text">Part 3: Process Puppeteering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-7-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5"><span class="nav-text">Chapter 7: 代码注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shellcode%E6%B3%A8%E5%85%A5"><span class="nav-text">shellcode注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DLL%E6%B3%A8%E5%85%A5"><span class="nav-text">DLL注入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-8-%E6%93%8D%E7%BA%B5%E6%B8%B8%E6%88%8F%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-text">Chapter 8: 操纵游戏控制流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NOP"><span class="nav-text">NOP</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#NOP%E5%AE%9E%E9%AA%8C"><span class="nav-text">NOP实验</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hook"><span class="nav-text">Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Call-Hooking"><span class="nav-text">Call Hooking</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Call-Hook%E5%AE%9E%E9%AA%8C"><span class="nav-text">Call Hook实验</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VF-Table-Hooking"><span class="nav-text">VF Table Hooking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IAT-Hooking"><span class="nav-text">IAT Hooking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Jump-Hooking"><span class="nav-text">Jump Hooking</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8Direct3D%E4%B8%8A%E5%BA%94%E7%94%A8Jump-Hook%E5%92%8C%E8%99%9A%E8%A1%A8Hook"><span class="nav-text">在Direct3D上应用Jump Hook和虚表Hook</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-4-Creating-Bots"><span class="nav-text">Part 4: Creating Bots</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-9-%E5%88%A9%E7%94%A8ESP%E6%B6%88%E9%99%A4%E6%88%98%E4%BA%89%E8%BF%B7%E9%9B%BE"><span class="nav-text">Chapter 9: 利用ESP消除战争迷雾</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8Lighthack%E6%8F%AD%E7%A4%BA%E9%9A%90%E8%97%8F%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-text">利用Lighthack揭示隐藏的细节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87Wallhack%E5%8F%91%E7%8E%B0%E9%9A%90%E8%97%8F%E7%9A%84%E6%95%8C%E4%BA%BA"><span class="nav-text">通过Wallhack发现隐藏的敌人</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Z-Buffering"><span class="nav-text">Z-Buffering</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%B0%8F%E5%AE%9E%E9%AA%8C%E9%97%AE%E9%A2%98"><span class="nav-text">小实验问题</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81hack%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">寻找我们需要hack的模型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Zoomhack%E8%8E%B7%E5%8F%96%E6%9B%B4%E5%B9%BF%E9%98%94%E7%9A%84%E8%A7%86%E9%87%8E"><span class="nav-text">使用Zoomhack获取更广阔的视野</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-10-%E5%8F%8D%E9%A6%88%E5%BC%8F%E4%BD%9C%E5%BC%8A"><span class="nav-text">Chapter 10: 反馈式作弊</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E6%B8%B8%E6%88%8F%E4%BA%8B%E4%BB%B6"><span class="nav-text">监控游戏事件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-text">监控网络数据包</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%B8%B8%E6%88%8F%E5%86%85%E6%93%8D%E4%BD%9C"><span class="nav-text">执行游戏内操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E7%94%A8%E6%88%B7%E8%BE%93%E5%85%A5"><span class="nav-text">模拟用户输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-text">发送数据包</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8THIS%E6%8C%87%E9%92%88%E8%B0%83%E7%94%A8-thiscall"><span class="nav-text">使用THIS指针调用__thiscall</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Game-Hacking"><span class="nav-text">Game Hacking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-1-Tools-of-the-Trade"><span class="nav-text">Part 1: Tools of the Trade</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-1-%E4%BD%BF%E7%94%A8CE%E6%89%AB%E6%8F%8F%E5%86%85%E5%AD%98"><span class="nav-text">Chapter 1: 使用CE扫描内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-2-%E4%BD%BF%E7%94%A8OD%E8%B0%83%E8%AF%95%E6%B8%B8%E6%88%8F"><span class="nav-text">Chapter 2: 使用OD调试游戏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OllyDbg%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-text">OllyDbg表达式的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B1%EF%BC%9A%E5%BD%93%E7%89%B9%E5%AE%9A%E7%8E%A9%E5%AE%B6%E5%90%8D%E5%AD%97%E8%A2%AB%E6%89%93%E5%8D%B0%E6%97%B6%E6%9A%82%E5%81%9C%E6%89%A7%E8%A1%8C"><span class="nav-text">例1：当特定玩家名字被打印时暂停执行</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B2%EF%BC%9A%E5%BD%93%E7%8E%A9%E5%AE%B6%E8%A1%80%E9%87%8F%E4%B8%8B%E9%99%8D%E6%97%B6%E6%9A%82%E5%81%9C%E6%89%A7%E8%A1%8C"><span class="nav-text">例2：当玩家血量下降时暂停执行</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%83%E4%B9%A0%EF%BC%9APATCHING-AN-IF-STATEMENT"><span class="nav-text">小练习：PATCHING AN IF() STATEMENT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-3-%E4%BD%BF%E7%94%A8Process-Monitor%E5%92%8CProcess-Explorer%E8%BF%9B%E8%A1%8C%E4%BE%A6%E5%AF%9F"><span class="nav-text">Chapter 3: 使用Process Monitor和Process Explorer进行侦察</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Process-Monitor"><span class="nav-text">Process Monitor</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%8F%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%BF%AE%E6%94%B9%E6%9C%80%E9%AB%98%E5%88%86%E6%96%87%E4%BB%B6"><span class="nav-text">小练习：修改最高分文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Process-Explorer"><span class="nav-text">Process Explorer</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%8F%E7%BB%83%E4%B9%A0%EF%BC%9A%E5%85%B3%E9%97%ADMutex%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%BC%80"><span class="nav-text">小练习：关闭Mutex实现多开</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-2-Game-Dissection"><span class="nav-text">Part 2: Game Dissection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-4-From-Code-to-Memory-A-General-Primer"><span class="nav-text">Chapter 4: From Code to Memory: A General Primer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">段寄存器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DIV-amp-amp-MUL"><span class="nav-text">DIV&amp;&amp;MUL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">调用约定</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-5-%E9%AB%98%E7%BA%A7%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81"><span class="nav-text">Chapter 5: 高级内存取证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%86%E5%88%AB%E6%B8%B8%E6%88%8F%E4%B8%AD%E5%A4%8D%E6%9D%82%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">识别游戏中复杂的数据结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-6-%E8%AF%BB%E5%86%99%E6%B8%B8%E6%88%8F%E5%86%85%E5%AD%98"><span class="nav-text">Chapter 6: 读写游戏内存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-3-Process-Puppeteering"><span class="nav-text">Part 3: Process Puppeteering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-7-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5"><span class="nav-text">Chapter 7: 代码注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shellcode%E6%B3%A8%E5%85%A5"><span class="nav-text">shellcode注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DLL%E6%B3%A8%E5%85%A5"><span class="nav-text">DLL注入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-8-%E6%93%8D%E7%BA%B5%E6%B8%B8%E6%88%8F%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-text">Chapter 8: 操纵游戏控制流</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NOP"><span class="nav-text">NOP</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#NOP%E5%AE%9E%E9%AA%8C"><span class="nav-text">NOP实验</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hook"><span class="nav-text">Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Call-Hooking"><span class="nav-text">Call Hooking</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Call-Hook%E5%AE%9E%E9%AA%8C"><span class="nav-text">Call Hook实验</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VF-Table-Hooking"><span class="nav-text">VF Table Hooking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IAT-Hooking"><span class="nav-text">IAT Hooking</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Jump-Hooking"><span class="nav-text">Jump Hooking</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8Direct3D%E4%B8%8A%E5%BA%94%E7%94%A8Jump-Hook%E5%92%8C%E8%99%9A%E8%A1%A8Hook"><span class="nav-text">在Direct3D上应用Jump Hook和虚表Hook</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Part-4-Creating-Bots"><span class="nav-text">Part 4: Creating Bots</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-9-%E5%88%A9%E7%94%A8ESP%E6%B6%88%E9%99%A4%E6%88%98%E4%BA%89%E8%BF%B7%E9%9B%BE"><span class="nav-text">Chapter 9: 利用ESP消除战争迷雾</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8Lighthack%E6%8F%AD%E7%A4%BA%E9%9A%90%E8%97%8F%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-text">利用Lighthack揭示隐藏的细节</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87Wallhack%E5%8F%91%E7%8E%B0%E9%9A%90%E8%97%8F%E7%9A%84%E6%95%8C%E4%BA%BA"><span class="nav-text">通过Wallhack发现隐藏的敌人</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Z-Buffering"><span class="nav-text">Z-Buffering</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%B0%8F%E5%AE%9E%E9%AA%8C%E9%97%AE%E9%A2%98"><span class="nav-text">小实验问题</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81hack%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">寻找我们需要hack的模型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Zoomhack%E8%8E%B7%E5%8F%96%E6%9B%B4%E5%B9%BF%E9%98%94%E7%9A%84%E8%A7%86%E9%87%8E"><span class="nav-text">使用Zoomhack获取更广阔的视野</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-10-%E5%8F%8D%E9%A6%88%E5%BC%8F%E4%BD%9C%E5%BC%8A"><span class="nav-text">Chapter 10: 反馈式作弊</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E6%B8%B8%E6%88%8F%E4%BA%8B%E4%BB%B6"><span class="nav-text">监控游戏事件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-text">监控网络数据包</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%B8%B8%E6%88%8F%E5%86%85%E6%93%8D%E4%BD%9C"><span class="nav-text">执行游戏内操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E7%94%A8%E6%88%B7%E8%BE%93%E5%85%A5"><span class="nav-text">模拟用户输入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%E5%8C%85"><span class="nav-text">发送数据包</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8THIS%E6%8C%87%E9%92%88%E8%B0%83%E7%94%A8-thiscall"><span class="nav-text">使用THIS指针调用__thiscall</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-11-%E4%BD%BF%E7%94%A8%E4%B9%8B%E5%89%8D%E7%9A%84%E7%A0%94%E7%A9%B6%E6%88%90%E6%9E%9C%E5%86%99%E4%B8%80%E4%B8%AA%E6%9C%BA%E5%99%A8%E4%BA%BA"><span class="nav-text">Chapter 11: 使用之前的研究成果写一个机器人</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chapter-12-%E4%BF%9D%E6%8C%81%E9%9A%90%E8%94%BD"><span class="nav-text">Chapter 12: 保持隐蔽</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81AntiCheat%E8%BD%AF%E4%BB%B6"><span class="nav-text">常见AntiCheat软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E5%BF%83%E5%9C%B0%E7%AE%A1%E7%90%86Bot%E7%95%99%E4%B8%8B%E7%9A%84%E8%B6%B3%E8%BF%B9"><span class="nav-text">小心地管理Bot留下的足迹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E6%8A%97%E5%8F%8D%E4%BD%9C%E5%BC%8A"><span class="nav-text">对抗反作弊</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-text">后记</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -735,12 +800,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">32k</span>
+    <span title="站点总字数">33k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:57</span>
+    <span title="站点阅读时长">2:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
