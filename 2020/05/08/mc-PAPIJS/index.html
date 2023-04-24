@@ -264,7 +264,7 @@
 </li>
 <li>什么是<code>JavaSript</code>，和<code>Java</code>有关系吗？<code>JS</code>是不是就是<code>Java</code>的脚本？<ul>
 <li>首先要明确的就是，<code>JavaScript</code>和<code>Java</code>的关系就像雷锋和雷峰塔一样，八竿子打不着。</li>
-<li>JavaScript（通常缩写为JS）是一种高级的、解释型的编程语言[8]。JavaScript是一门基于原型、函数先行的语言，是一门多范式的语言，它支持面向对象编程，命令式编程，以及函数式编程。它提供语法来操控文本、数组、日期以及正则表达式等，不支持I/O，比如网络、存储和图形等，但这些都可以由它的宿主环境提供支持。</li>
+<li>JavaScript（通常缩写为JS）是一种高级的、解释型的编程语言[8]。JavaScript是一门基于原型、函数先行的语言，是一门多范式的语言，它支持面向对象编程，命令式编程，以及函数式编程。它提供语法来操控文本、数组、日期以及正则表达式等，不支持I&#x2F;O，比如网络、存储和图形等，但这些都可以由它的宿主环境提供支持。</li>
 <li><code>Java</code>内置了<code>Nashorn</code>引擎(<code>JDK 1.8</code>以前是<code>Rhino</code>)，而<code>PlaceholderAPI</code>就是直接使用这个引擎，来对<code>JS</code>脚本进行解析，从而执行并获取我们脚本返回的结果</li>
 </ul>
 </li>
@@ -311,7 +311,8 @@
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&lt;你的扩展标识名&gt;:</span></span><br><span class="line">  <span class="attr">file:</span> <span class="string">&lt;你的扩展标识名&gt;.js</span></span><br><span class="line">  <span class="attr">engine:</span> <span class="string">nashorn</span></span><br><span class="line"><span class="comment"># 使用Java 7开服的请在engine处填写Rhino</span></span><br></pre></td></tr></table></figure>
 
 <p>例如我上面命名为<code>test.js</code>，那么我就需要添加</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">file:</span> <span class="string">test.js</span></span><br><span class="line">  <span class="attr">engine:</span> <span class="string">nashorn</span></span><br></pre></td></tr></table></figure></li>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">file:</span> <span class="string">test.js</span></span><br><span class="line">  <span class="attr">engine:</span> <span class="string">nashorn</span></span><br></pre></td></tr></table></figure>
+</li>
 <li><p>在<code>&lt;你的扩展标识名&gt;.js</code>里面写上你的脚本，然后重载一次，你就可以使用<code>%javascript_&lt;你的扩展标识名&gt;%</code>这个变量啦，例如我的就是<code>%javascript_test%</code></p>
 </li>
 </ul>
@@ -323,7 +324,7 @@
 </li>
 </ul>
 <h2 id="三、各种场景的实战演示"><a href="#三、各种场景的实战演示" class="headerlink" title="三、各种场景的实战演示"></a>三、各种场景的实战演示</h2><h3 id="场景一-修改已有的placeholder为你想要的类型"><a href="#场景一-修改已有的placeholder为你想要的类型" class="headerlink" title="场景一  修改已有的placeholder为你想要的类型"></a>场景一  修改已有的placeholder为你想要的类型</h3><h4 id="1-场景描述"><a href="#1-场景描述" class="headerlink" title="1. 场景描述"></a>1. 场景描述</h4><ul>
-<li>有一个插件名为<code>PvPToggle</code>，它可以让玩家自行开/关<code>PVP</code>状态，我想在侧边计分板中实时显示玩家的<code>PVP</code>状态，碰巧，它提供了一个名为<code>%pvptoggle_pvp_state%</code>的变量，直接用吧！但是它居然是英文的？那就让我们来修改它吧！</li>
+<li>有一个插件名为<code>PvPToggle</code>，它可以让玩家自行开&#x2F;关<code>PVP</code>状态，我想在侧边计分板中实时显示玩家的<code>PVP</code>状态，碰巧，它提供了一个名为<code>%pvptoggle_pvp_state%</code>的变量，直接用吧！但是它居然是英文的？那就让我们来修改它吧！</li>
 </ul>
 <h4 id="2-创建新的JS变量"><a href="#2-创建新的JS变量" class="headerlink" title="2. 创建新的JS变量"></a>2. 创建新的JS变量</h4><ul>
 <li><p>根据上面一大模块中3的步骤，我们新建一个名为<code>pvp_state</code>的变量</p>
@@ -552,7 +553,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -600,12 +601,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:01</span>
+    <span title="站点阅读时长">2:04</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

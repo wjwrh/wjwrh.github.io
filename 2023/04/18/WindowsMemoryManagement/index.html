@@ -20,20 +20,27 @@
     var CONFIG = {"hostname":"blog.go2mc.net","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Associated Types &amp; GenericsRust中有一个概念叫做Associated Types，能够在trait中关联一个类型，功能类似于Generics，最主要应用就是Iterator，具体用例如下 12345pub trait Iterator &amp;#123;    type Item;    fn next(&amp;mut self) -&gt; Option&lt;">
+  <meta name="description" content="Windows内存管理之前看过一些关于x86&#x2F;x64的硬件级内存管理机制(分段、分页)，但操作系统级还会利用这些机制做进一步的应用(COW、swap等等)，在Windows上做Intel-VT、内存取证等方向时难免会需要了解Windows所有的内存管理机制，所以打算系统性的学习总结一下 大部分内容来自《Windows Internals - Part 1, 7th Edition》">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Associated Types &amp; Generics">
-<meta property="og:url" content="https://blog.go2mc.net/2023/02/04/RustAssociatedTypes/index.html">
+<meta property="og:title" content="WindowsMemoryManagement">
+<meta property="og:url" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/index.html">
 <meta property="og:site_name" content="Ruby&#39;s Blog">
-<meta property="og:description" content="Associated Types &amp; GenericsRust中有一个概念叫做Associated Types，能够在trait中关联一个类型，功能类似于Generics，最主要应用就是Iterator，具体用例如下 12345pub trait Iterator &amp;#123;    type Item;    fn next(&amp;mut self) -&gt; Option&lt;">
+<meta property="og:description" content="Windows内存管理之前看过一些关于x86&#x2F;x64的硬件级内存管理机制(分段、分页)，但操作系统级还会利用这些机制做进一步的应用(COW、swap等等)，在Windows上做Intel-VT、内存取证等方向时难免会需要了解Windows所有的内存管理机制，所以打算系统性的学习总结一下 大部分内容来自《Windows Internals - Part 1, 7th Edition》">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-04T20:25:37.000Z">
-<meta property="article:modified_time" content="2023-02-14T13:17:01.000Z">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230418111308066.png">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230418152137250.png">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230419102850096.png">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230419102911136.png">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230419191238990.png">
+<meta property="article:published_time" content="2023-04-18T10:50:26.000Z">
+<meta property="article:modified_time" content="2023-04-24T03:24:08.550Z">
 <meta property="article:author" content="Ruby">
-<meta property="article:tag" content="Rust">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230418111308066.png">
 
-<link rel="canonical" href="https://blog.go2mc.net/2023/02/04/RustAssociatedTypes/">
+<link rel="canonical" href="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/">
 
 
 <script id="page-configurations">
@@ -46,7 +53,7 @@
   };
 </script>
 
-  <title>Associated Types & Generics | Ruby's Blog</title>
+  <title>WindowsMemoryManagement | Ruby's Blog</title>
   
 
 
@@ -159,7 +166,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.go2mc.net/2023/02/04/RustAssociatedTypes/">
+    <link itemprop="mainEntityOfPage" href="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -172,7 +179,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Associated Types & Generics
+          WindowsMemoryManagement
         </h1>
 
         <div class="post-meta">
@@ -182,14 +189,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-02-04 20:25:37" itemprop="dateCreated datePublished" datetime="2023-02-04T20:25:37+00:00">2023-02-04</time>
+              <time title="创建时间：2023-04-18 10:50:26" itemprop="dateCreated datePublished" datetime="2023-04-18T10:50:26+00:00">2023-04-18</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-02-14 13:17:01" itemprop="dateModified" datetime="2023-02-14T13:17:01+00:00">2023-02-14</time>
+                <time title="修改时间：2023-04-24 03:24:08" itemprop="dateModified" datetime="2023-04-24T03:24:08+00:00">2023-04-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -197,12 +204,12 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Programming-Language/" itemprop="url" rel="index"><span itemprop="name">Programming Language</span></a>
+                  <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
                 </span>
             </span>
 
           
-            <span id="/2023/02/04/RustAssociatedTypes/" class="post-meta-item leancloud_visitors" data-flag-title="Associated Types & Generics" title="阅读次数">
+            <span id="/2023/04/18/WindowsMemoryManagement/" class="post-meta-item leancloud_visitors" data-flag-title="WindowsMemoryManagement" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -217,8 +224,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/02/04/RustAssociatedTypes/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/02/04/RustAssociatedTypes/" itemprop="commentCount"></span>
+    <a title="valine" href="/2023/04/18/WindowsMemoryManagement/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/04/18/WindowsMemoryManagement/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -228,14 +235,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>530</span>
+              <span>1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -247,30 +254,49 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="Associated-Types-amp-Generics"><a href="#Associated-Types-amp-Generics" class="headerlink" title="Associated Types &amp; Generics"></a>Associated Types &amp; Generics</h1><p>Rust中有一个概念叫做<code>Associated Types</code>，能够在trait中关联一个类型，功能类似于<code>Generics</code>，最主要应用就是<code>Iterator</code>，具体用例如下</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Iterator</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>第一眼在rust book看到这东西的时候感觉就跟泛型挺像的，并且书在随后也说明了与泛型的区别，凭借👴🏻抽象的英语水平磕磕绊绊的读完了<a target="_blank" rel="noopener" href="https://doc.rust-lang.org/book/ch19-03-advanced-traits.html#specifying-placeholder-types-in-trait-definitions-with-associated-types">一大段描述</a>后有了一定的理解，遂记录下来</p>
+        <h1 id="Windows内存管理"><a href="#Windows内存管理" class="headerlink" title="Windows内存管理"></a>Windows内存管理</h1><p>之前看过一些关于x86&#x2F;x64的硬件级内存管理机制(分段、分页)，但操作系统级还会利用这些机制做进一步的应用(COW、swap等等)，在Windows上做Intel-VT、内存取证等方向时难免会需要了解Windows所有的内存管理机制，所以打算系统性的学习总结一下</p>
+<p>大部分内容来自《Windows Internals - Part 1, 7th Edition》</p>
 <span id="more"></span>
 
-<h2 id="为什么不使用泛型"><a href="#为什么不使用泛型" class="headerlink" title="为什么不使用泛型?"></a>为什么不使用泛型?</h2><p>rust标准库的迭代器并没有使用泛型，而是使用上文中类似的定义，如果使用泛型，其定义大致如下</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Iterator</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;T&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样会造成一个问题，就是可以对同一struct实现多次Iterator，即</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Iterator</span>&lt;<span class="type">u32</span>&gt; <span class="keyword">for</span> <span class="title class_">SomeStruct</span> &#123;...&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Iterator</span>&lt;<span class="type">f64</span>&gt; <span class="keyword">for</span> <span class="title class_">SomeStruct</span> &#123;...&#125;</span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Iterator</span>&lt;<span class="type">String</span>&gt; <span class="keyword">for</span> <span class="title class_">SomeStruct</span> &#123;...&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样与迭代器的设计理念不太符合(怎么会有返回各种各样类型的迭代器啊😢)，迭代器中诸如next方法的返回值应当与关联的集合中元素的类型相同(或者为其引用)。另外，如果使用泛型，调用next方法时，如果缺乏其它推断返回值类型的条件，则还需要显示指定具体使用的泛型类型，这为使用也带来了不变。</p>
-<p>使用<code>Associated Types</code>则可以规避这种问题，并且更贴合迭代器的概念</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Iterator</span> <span class="keyword">for</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span> = <span class="type">u32</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt; &#123;</span><br><span class="line">        <span class="comment">// --snip--</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="何时使用Associated-Types"><a href="#何时使用Associated-Types" class="headerlink" title="何时使用Associated Types?"></a>何时使用Associated Types?</h2><p>这里👴🏻斗胆总结一下，就是当一个trait的部分方法会接受&#x2F;返回某个类型，并且</p>
+<h2 id="Memory-manager简介"><a href="#Memory-manager简介" class="headerlink" title="Memory manager简介"></a>Memory manager简介</h2><h3 id="Memory-manager组件"><a href="#Memory-manager组件" class="headerlink" title="Memory manager组件"></a>Memory manager组件</h3><p><code>memory manager</code>是executive的一部分，位于ntoskrnl.exe中，不存在于HAL中(可以理解为与硬件无关)，包含以下几个部分</p>
 <ul>
-<li>该类型不一定是实现该trait的类型(这导致无法用Self代替)</li>
-<li>该类型又与实现该trait的类型唯一关联(这导致泛型并不适用)</li>
-<li>只有在为某一具体类型实现该tarit时，才能决定关联的类型。这导致必须使用<code>Associated Types</code>，因为声明trait方法时需要给出完整方法签名</li>
+<li>一系列分配、取消分配和管理内存的系统服务</li>
+<li>处理内存异常(内存翻译失败、访问错误)的处理函数</li>
+<li>六个关键顶层例程，每一个都运行在单独的内核模式线程中(SYSTEM:4)</li>
 </ul>
+<h3 id="大页与小页"><a href="#大页与小页" class="headerlink" title="大页与小页"></a>大页与小页</h3><p>x86是支持多种大小的页面的</p>
+<p>1GB(PDPTE) 2MB(PDE) 4KB(PTE) </p>
+<p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230418111308066.png" alt="image-20230418111308066"></p>
+<p>Windows默认会为ntoskrnl.exe、hal.dll等核心数据分配Large Page，也会自动为符合长度的IoSpace分配大页面以提升操作系统的效率(因为TLB是有限的，Large Page可以提升TLB的命中率)，但Large Page会导致访问权限的控制粒度变粗</p>
+<p>Large Page的分配可能会失败，因为Large Page的起始范围必须是2MB(x64)的整数倍，例如物理页0-511可以分配一个大页面，但假如0-10被作为Small Page被分配了，那么下一次Large Page分配只能为512-1023，随着碎片页面的增加，最终可能无法分配出Large Page</p>
+<h2 id="Memory-manager提供的服务"><a href="#Memory-manager提供的服务" class="headerlink" title="Memory manager提供的服务"></a>Memory manager提供的服务</h2><p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230418152137250.png" alt="image-20230418152137250"></p>
+<h3 id="页的四种状态与内存分配"><a href="#页的四种状态与内存分配" class="headerlink" title="页的四种状态与内存分配"></a>页的四种状态与内存分配</h3><p>Page的四种状态分别为</p>
+<ul>
+<li>free</li>
+<li>reserved</li>
+<li>committed</li>
+<li>shareable</li>
+</ul>
+<p>committed和shareable状态都是有具体物理页面对应的虚拟页状态，即对他们的访问最终会翻译到某一个具体的物理页面上，区别是该页面是否可共享</p>
+<p>而reserved仅作预留虚拟内存空间用，它可以预留一片足够大小的虚拟内存空间(即会占用虚拟内存空间，Virtual Size会增加)，但不会分配物理内存</p>
+<p>$$<br>committed \stackrel{decommit}{\rightarrow} reserved \<br>committed \stackrel{release}{\rightarrow} free<br>$$</p>
+<h3 id="锁定内存"><a href="#锁定内存" class="headerlink" title="锁定内存"></a>锁定内存</h3><p>普通committed之后的内存并不会计入任务管理器的“使用中”，只会计入“已提交”，因为对操作系统而言这部分内存是可以在需要时swap out的，但将内存锁定后，内存无法被换出，这时在任务管理器也能看见使用中内存增长了</p>
+<p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230419102850096.png" alt="image-20230419102850096"></p>
+<p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230419102911136.png" alt="image-20230419102911136"></p>
+<h3 id="其它服务"><a href="#其它服务" class="headerlink" title="其它服务"></a>其它服务</h3><p>剩下的服务简要介绍一下</p>
+<ul>
+<li>Allocation granularity: Windows将保留的进程地址空间(reserved)的每个区域以64KB大小对齐</li>
+<li>Shared memory and mapped files: Windows以Section Objects来表示任何共享内存或基于文件映射的内存；如果一个section过大，可以只映射一部分到内存中(view of section)</li>
+<li>Protecting memory: Windows通过隔离用户&#x2F;内核内存、隔离不同进程内存、页表保护位、保护共享内存来实现内存安全保护</li>
+<li>DEP: 保护某些数据段，确保其无法执行</li>
+<li>COW: copy on write</li>
+<li>AWE: 通过将不同的物理页面映射到一个相同的虚拟内存窗口中，达到扩展虚拟内存可用范围的目的</li>
+</ul>
+<h2 id="Kernel-mode-heaps-system-memory-pools"><a href="#Kernel-mode-heaps-system-memory-pools" class="headerlink" title="Kernel-mode heaps (system memory pools)"></a>Kernel-mode heaps (system memory pools)</h2><p>内核代码使用的内存堆称为pool，分为paged和non-paged，二者的最大大小有限制，实际大小是动态的</p>
+<p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230419191238990.png" alt="image-20230419191238990"></p>
+<p>可以使用ProcExp或者windbg的!vm指令查看使用情况</p>
+<p>系统模块会使用的pooltag存放在wdk下Triage目录的Pooltag.txt文件中</p>
+<p>Windows会维护若干个叫做look-aside list的列表，每一个列表内包含大小相同的pool块，从该列表中申请内存效率高于直接从pool中申请内存，这个表用于给经常需要申请特定数据结构所需内存的代码提升效率；申请特定数据结构越勤，列表中存放的块则越多</p>
 
     </div>
 
@@ -281,7 +307,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/Rust/" rel="tag"><i class="fa fa-tag"></i> Rust</a>
+              <a href="/tags/Windows/" rel="tag"><i class="fa fa-tag"></i> Windows</a>
+              <a href="/tags/OS/" rel="tag"><i class="fa fa-tag"></i> OS</a>
           </div>
 
         
@@ -290,13 +317,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/12/05/RustNote/" rel="prev" title="Rust学习杂记">
-      <i class="fa fa-chevron-left"></i> Rust学习杂记
+    <a href="/2023/03/02/GameHackingDevelopment/" rel="prev" title="GameHackingDevelopment">
+      <i class="fa fa-chevron-left"></i> GameHackingDevelopment
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/02/05/Rustlings/" rel="next" title="Rustlings随记">
-      Rustlings随记 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -356,7 +380,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Associated-Types-amp-Generics"><span class="nav-text">Associated Types &amp; Generics</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%BD%BF%E7%94%A8%E6%B3%9B%E5%9E%8B"><span class="nav-text">为什么不使用泛型?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8Associated-Types"><span class="nav-text">何时使用Associated Types?</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Windows%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">Windows内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-manager%E7%AE%80%E4%BB%8B"><span class="nav-text">Memory manager简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-manager%E7%BB%84%E4%BB%B6"><span class="nav-text">Memory manager组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E9%A1%B5%E4%B8%8E%E5%B0%8F%E9%A1%B5"><span class="nav-text">大页与小页</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-manager%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-text">Memory manager提供的服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E7%9A%84%E5%9B%9B%E7%A7%8D%E7%8A%B6%E6%80%81%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-text">页的四种状态与内存分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%AE%9A%E5%86%85%E5%AD%98"><span class="nav-text">锁定内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E6%9C%8D%E5%8A%A1"><span class="nav-text">其它服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-mode-heaps-system-memory-pools"><span class="nav-text">Kernel-mode heaps (system memory pools)</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

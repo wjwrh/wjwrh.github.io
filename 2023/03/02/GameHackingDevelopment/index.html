@@ -363,9 +363,9 @@
 <h2 id="Part-2-Game-Dissection"><a href="#Part-2-Game-Dissection" class="headerlink" title="Part 2: Game Dissection"></a>Part 2: Game Dissection</h2><h3 id="Chapter-4-From-Code-to-Memory-A-General-Primer"><a href="#Chapter-4-From-Code-to-Memory-A-General-Primer" class="headerlink" title="Chapter 4: From Code to Memory: A General Primer"></a>Chapter 4: From Code to Memory: A General Primer</h3><p>这一章主要讲C++的变量在内存中的分布情况，一般不足4byte的变量会对齐到4byte，结构体中的成员对其会根据编译器的设置进行对齐</p>
 <p>另外就是一些VFT的知识，如果某些类由抽象类派生而来，那么在内存中该类的第一个成员会变成该类的虚表</p>
 <h4 id="段寄存器"><a href="#段寄存器" class="headerlink" title="段寄存器"></a>段寄存器</h4><p>在Windows x86实现中，通常</p>
-<p>DS(数据) = SS(stack) = GS = ES</p>
-<p>DS - CS = 8</p>
-<p>FS - DS != 0</p>
+<p>DS(数据) &#x3D; SS(stack) &#x3D; GS &#x3D; ES</p>
+<p>DS - CS &#x3D; 8</p>
+<p>FS - DS !&#x3D; 0</p>
 <p>FS会指向与当前线程相关的某些数据，在bypass ASLR的时候可能会用到</p>
 <h4 id="DIV-amp-amp-MUL"><a href="#DIV-amp-amp-MUL" class="headerlink" title="DIV&amp;&amp;MUL"></a>DIV&amp;&amp;MUL</h4><p>MUL(signed)和IMUL(unsigned)均可以仅接受一个操作数，根据操作数的大小可能分别会与EAX AX AL相乘，并且把结果存在大一级的寄存器中</p>
 <h4 id="调用约定"><a href="#调用约定" class="headerlink" title="调用约定"></a>调用约定</h4><p><img src="/2023/03/02/GameHackingDevelopment/../GameHackingDevelopment/image-20230304193625273.png" alt="image-20230304193625273"></p>
@@ -373,11 +373,12 @@
 <li><p><code>std::string</code></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">string</span> &#123;</span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">        <span class="type">char</span>* dataP;</span><br><span class="line">        <span class="type">char</span> dataA[<span class="number">16</span>];</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="type">int</span> length;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>当<code>string</code>存储的字符串长度&lt;=15时，则会直接存在类内，否则使用指针指向一块更大的区域</p>
+<p>当<code>string</code>存储的字符串长度&lt;&#x3D;15时，则会直接存在类内，否则使用指针指向一块更大的区域</p>
 <p>当一个null-terminated字符串与一个字符串长度变量同时出现时就得考虑它是不是<code>std::string</code>了</p>
 </li>
 <li><p><code>std::vector</code></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vector</span> &#123;</span><br><span class="line">    T* begin;	<span class="comment">// vector头</span></span><br><span class="line">    T* end;		<span class="comment">// vector尾</span></span><br><span class="line">    T* reservationEnd;	<span class="comment">// 实际分配的空间尾</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">vector</span> &#123;</span><br><span class="line">    T* begin;	<span class="comment">// vector头</span></span><br><span class="line">    T* end;		<span class="comment">// vector尾</span></span><br><span class="line">    T* reservationEnd;	<span class="comment">// 实际分配的空间尾</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
 <li><p><code>std::list</code></p>
 <p>链表，由于不能random access，访问元素开销大，通常很少在游戏里见到</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">listItem</span> &#123;</span><br><span class="line">    listItem&lt;T&gt;* next;</span><br><span class="line">    listItem&lt;T&gt;* prev;</span><br><span class="line">    T value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">list</span> &#123;</span><br><span class="line">    listItem&lt;T&gt;* root;</span><br><span class="line">    <span class="type">int</span> size;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
@@ -431,7 +432,8 @@
 <li><p><code>SetThreadContext</code></p>
 </li>
 <li><p>将原EIP写入shellcode中</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUSH OriginEIP</span><br><span class="line">RET</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUSH OriginEIP</span><br><span class="line">RET</span><br></pre></td></tr></table></figure>
+</li>
 <li><p><code>ResumeThread</code></p>
 </li>
 </ul>
@@ -598,7 +600,7 @@
 <p>vector可以动态修改，增加新条件等</p>
 </li>
 <li><p>寻路算法</p>
-<p>这个没看((，有兴趣的时候再看看 </p>
+<p>这个没看((，有兴趣的时候再看看</p>
 </li>
 </ul>
 <h3 id="Chapter-12-保持隐蔽"><a href="#Chapter-12-保持隐蔽" class="headerlink" title="Chapter 12: 保持隐蔽"></a>Chapter 12: 保持隐蔽</h3><p>这一章主要介绍了几个反作弊软件，以及一些绕过他们的技巧 </p>
@@ -678,7 +680,10 @@
     <a href="/2023/02/15/DeployBlogs/" rel="prev" title="把博客重新支楞起来">
       <i class="fa fa-chevron-left"></i> 把博客重新支楞起来
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/18/WindowsMemoryManagement/" rel="next" title="WindowsMemoryManagement">
+      WindowsMemoryManagement <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -752,7 +757,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -800,12 +805,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:01</span>
+    <span title="站点阅读时长">2:04</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

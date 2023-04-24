@@ -404,9 +404,9 @@
 <h2 id="7-Managing-Growing-Projects-with-Packages-Crates-and-Modules"><a href="#7-Managing-Growing-Projects-with-Packages-Crates-and-Modules" class="headerlink" title="7. Managing Growing Projects with Packages, Crates, and Modules"></a>7. Managing Growing Projects with Packages, Crates, and Modules</h2><h3 id="Packages-amp-Crates"><a href="#Packages-amp-Crates" class="headerlink" title="Packages &amp; Crates"></a>Packages &amp; Crates</h3><p>crate是Rust编译器处理代码时的最小单位，crate分为binary crate和library crate</p>
 <p>binary crate可以编译为可运行程序，library crate可以编译成库</p>
 <p>package是一个或多个提供一系列功能的组合，一个package可以包含任意个bin crate，但只能包含一个lib crate</p>
-<p>src/main.rs 是crate root</p>
-<p>src/lib.rs    也是crate root</p>
-<p>src/bin/里面的文件都会被当作独立的binary crate</p>
+<p>src&#x2F;main.rs 是crate root</p>
+<p>src&#x2F;lib.rs	也是crate root</p>
+<p>src&#x2F;bin&#x2F;里面的文件都会被当作独立的binary crate</p>
 <p>[rust api guidelines](<a target="_blank" rel="noopener" href="https://rust-lang.github.io/api-guidelines/">About - Rust API Guidelines (rust-lang.github.io)</a>)</p>
 <h3 id="Modules"><a href="#Modules" class="headerlink" title="Modules"></a>Modules</h3><p>crate root可以创建新的模块，在非根模块中也可以创建子模块</p>
 <p><img src="/2022/12/05/RustNote/.././note.assets/image-20221202160141439.png" alt="image-20221202160141439"></p>
@@ -434,7 +434,7 @@
 <h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>String的实现实际上就是<code>Vec&lt;u8&gt;</code>，以utf8的形式存储字符串</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建String的几种方法</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = <span class="string">&quot;Hello&quot;</span>.<span class="title function_ invoke__">to_string</span>();</span><br></pre></td></tr></table></figure>
 
-<p>可以使用push/push_str的方式拼接字符/字符串</p>
+<p>可以使用push&#x2F;push_str的方式拼接字符&#x2F;字符串</p>
 <p>也可以使用+运算符，需要注意的是第一个元素的所有权会被move给add函数，并在随后返回拼接好的字符串，其余参数可以使用引用</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">s1</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Hello, &quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s2</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;world!&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s3</span> = s1 + &amp;s2; <span class="comment">// note s1 has been moved here and can no longer be used</span></span><br></pre></td></tr></table></figure>
 
@@ -557,7 +557,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -605,12 +605,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:01</span>
+    <span title="站点阅读时长">2:04</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

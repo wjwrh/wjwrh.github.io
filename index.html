@@ -153,6 +153,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Ruby">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ruby's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/18/WindowsMemoryManagement/" class="post-title-link" itemprop="url">WindowsMemoryManagement</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-18 10:50:26" itemprop="dateCreated datePublished" datetime="2023-04-18T10:50:26+00:00">2023-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-24 03:24:08" itemprop="dateModified" datetime="2023-04-24T03:24:08+00:00">2023-04-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2023/04/18/WindowsMemoryManagement/" class="post-meta-item leancloud_visitors" data-flag-title="WindowsMemoryManagement" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Windows内存管理"><a href="#Windows内存管理" class="headerlink" title="Windows内存管理"></a>Windows内存管理</h1><p>之前看过一些关于x86&#x2F;x64的硬件级内存管理机制(分段、分页)，但操作系统级还会利用这些机制做进一步的应用(COW、swap等等)，在Windows上做Intel-VT、内存取证等方向时难免会需要了解Windows所有的内存管理机制，所以打算系统性的学习总结一下</p>
+<p>大部分内容来自《Windows Internals - Part 1, 7th Edition》</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/18/WindowsMemoryManagement/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://blog.go2mc.net/2023/03/02/GameHackingDevelopment/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -758,7 +863,7 @@
 
       
           <h1 id="Windows-Internal"><a href="#Windows-Internal" class="headerlink" title="Windows Internal"></a>Windows Internal</h1><h2 id="CHAPTER-2-System-architecture"><a href="#CHAPTER-2-System-architecture" class="headerlink" title="CHAPTER 2 System architecture"></a>CHAPTER 2 System architecture</h2><p><img src="/2022/07/12/WindowsInternal/../WindowsInternal/Acrobat_uOCjMD5wZX.png" alt="uTools_0igR8j8Mnj"></p>
-<h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>VTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I/O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。</p>
+<h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>VTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I&#x2F;O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。</p>
 <p>VTL 1的secure kernel使用独立的二进制文件securekernel.exe，同时IUM的dll也有所不同，lumdll.dll对应ntdll.dll，lumbase.dll对应Kernelbase.dll</p>
 <h3 id="User-Mode"><a href="#User-Mode" class="headerlink" title="User Mode"></a>User Mode</h3><h4 id="subsystem"><a href="#subsystem" class="headerlink" title="subsystem"></a>subsystem</h4><p>子系统有以下主要构件</p>
 <ul>
@@ -1170,7 +1275,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1218,12 +1323,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:01</span>
+    <span title="站点阅读时长">2:04</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"blog.go2mc.net","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Windows InternalCHAPTER 2 System architecture HypervisorVTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I&#x2F;O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。 VTL 1的s">
+  <meta name="description" content="Windows InternalCHAPTER 2 System architecture HypervisorVTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I&#x2F;O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。 VT">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows Internal 随记">
 <meta property="og:url" content="https://blog.go2mc.net/2022/07/12/WindowsInternal/index.html">
 <meta property="og:site_name" content="Ruby&#39;s Blog">
-<meta property="og:description" content="Windows InternalCHAPTER 2 System architecture HypervisorVTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I&#x2F;O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。 VTL 1的s">
+<meta property="og:description" content="Windows InternalCHAPTER 2 System architecture HypervisorVTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I&#x2F;O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。 VT">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog.go2mc.net/2022/07/12/WindowsInternal/Acrobat_uOCjMD5wZX.png">
 <meta property="og:image" content="https://blog.go2mc.net/2022/07/12/WindowsInternal/image-20220713154525054.png">
@@ -254,7 +254,7 @@
 
       
         <h1 id="Windows-Internal"><a href="#Windows-Internal" class="headerlink" title="Windows Internal"></a>Windows Internal</h1><h2 id="CHAPTER-2-System-architecture"><a href="#CHAPTER-2-System-architecture" class="headerlink" title="CHAPTER 2 System architecture"></a>CHAPTER 2 System architecture</h2><p><img src="/2022/07/12/WindowsInternal/../WindowsInternal/Acrobat_uOCjMD5wZX.png" alt="uTools_0igR8j8Mnj"></p>
-<h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>VTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I/O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。</p>
+<h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>VTL 0与VTL 1是一种类似隔离的机制，与原有的Ring机制有一定的独立性，VTL 0的内核无法访问VTL 1的用户态内存，虚拟机监视器是操作系统第一个初始化的组件，他会设置I&#x2F;O MMU（避免通过DMA直接访问物理内存）以及SLAT，用来控制VTL 0中的内存访问。</p>
 <p>VTL 1的secure kernel使用独立的二进制文件securekernel.exe，同时IUM的dll也有所不同，lumdll.dll对应ntdll.dll，lumbase.dll对应Kernelbase.dll</p>
 <h3 id="User-Mode"><a href="#User-Mode" class="headerlink" title="User Mode"></a>User Mode</h3><h4 id="subsystem"><a href="#subsystem" class="headerlink" title="subsystem"></a>subsystem</h4><p>子系统有以下主要构件</p>
 <ul>
@@ -273,9 +273,9 @@
 <ul>
 <li>该API实现功能较为简单，直接在特定dll内部即可完成</li>
 <li>需要切换到内核态实现功能，此时API代码会调用ntdll.dll内的桩代码进入内核态</li>
-<li>需要在子系统进程(Csrss.exe，Client/Server Runtime SubSystem)完成，此时subsystem dll通过ALPC向子系统进程发出请求，同时等待其回应</li>
+<li>需要在子系统进程(Csrss.exe，Client&#x2F;Server Runtime SubSystem)完成，此时subsystem dll通过ALPC向子系统进程发出请求，同时等待其回应</li>
 </ul>
-<p>在Win8之后，cmd.exe会创建conhost.exe线程，后者用于与ConDrv.sys通信，该驱动用来处理I/O输入，用来减轻Csrss.exe上下文切换的压力</p>
+<p>在Win8之后，cmd.exe会创建conhost.exe线程，后者用于与ConDrv.sys通信，该驱动用来处理I&#x2F;O输入，用来减轻Csrss.exe上下文切换的压力</p>
 <h4 id="WSL"><a href="#WSL" class="headerlink" title="WSL"></a>WSL</h4><p>WSL(Windows Subsystem for Linux)与上述environment subsystem不隶属同一范畴，WSL使用Pico Provider机制，使用LXCore与LXSS两个驱动，向内核注册自身，在此之后便可由这两个驱动处理用户态Pico Process的各项系统调用</p>
 <p>为了更好地实现Linux的特性，适配Linux程序，Windows与Linux之间有一部分类似但具有一定差异的特性（例如具名管道）不能重复利用，只能重新实现。</p>
 <h4 id="ntdll-dll"><a href="#ntdll-dll" class="headerlink" title="ntdll.dll"></a>ntdll.dll</h4><p>包含两类代码</p>
@@ -299,12 +299,12 @@
 <li><strong>对外导出且可在用户态调用的函数</strong> 这些函数被称为<em>system service</em>并且通过Ntdll.dll导出，例如NtCreateFile。这些函数绝大多数都可以通过Windows API或者子系统API访问，也有一少部分无法通过记录的API调用。</li>
 <li><strong>通过DeviceIoControl调用的设备驱动函数</strong> 它们提供了一个用户模式到内核模式的通用接口，用于调用设备驱动中与读写无关的函数(?)</li>
 <li><strong>记录在WDK中只能在内核态调用的导出函数</strong><ul>
-<li>以Io开头的I/O管理器例程</li>
+<li>以Io开头的I&#x2F;O管理器例程</li>
 <li>以Ex开头的通用executive函数</li>
 </ul>
 </li>
 <li><strong>已被导出但未记录在WDK中能在内核态调用的函数</strong> 包含了由boot video driver调用的函数，以Inbv开头</li>
-<li><strong>并未导出但是被定义为全局符号的函数</strong> 这些函数包含内部支持函数，例如以Iop开头的内部I/O管理支持函数以及以Mi开头的内部内存管理支持函数</li>
+<li><strong>并未导出但是被定义为全局符号的函数</strong> 这些函数包含内部支持函数，例如以Iop开头的内部I&#x2F;O管理支持函数以及以Mi开头的内部内存管理支持函数</li>
 <li><strong>在模块内未被定义为全局符号的函数</strong> 这些函数只能由executive和kernel使用(即只能在ntoskrnl内使用)</li>
 </ul>
 <p>该层内有以下主要组件</p>
@@ -312,12 +312,12 @@
 <li><strong>Configuration manager</strong> 配置管理器，负责实现与管理注册表</li>
 <li><strong>Process manager</strong> 进程管理器，负责创建与终止进程和线程，进程和进程的底层实现由下层的内核提供，该部件为这些底层对象提供更多的语义及函数(个人理解即进行了包装，提供了更多的操作)</li>
 <li><strong>Security Reference Monitor</strong> SRM，安全参考监视器，强化本机的安全政策，保护系统资源，执行运行时对象审查与保护</li>
-<li><strong>I/O manager</strong> 实现独立于设备之上的I/O操作，并且将I/O发派给合适的设备驱动做进一步处理</li>
-<li><strong>Plug and Play(PnP) manager</strong> PnP管理器，判断某一设备需要哪些驱动，并且为该设备加载这些驱动。它会在枚举时查询每一个设备的硬件资源需求，根据这些需求来为设备分配硬件资源，例如I/O ports, IRQs, DMA以及memory location。它同时也负责为系统上的设备更改发送合适的事件通知。</li>
-<li><strong>Power manager</strong> 电源管理器，processor power management(PPM)以及power management  framework(PoFx)协调电源事件同时向设备驱动生成电源管理I/O通知。</li>
+<li><strong>I&#x2F;O manager</strong> 实现独立于设备之上的I&#x2F;O操作，并且将I&#x2F;O发派给合适的设备驱动做进一步处理</li>
+<li><strong>Plug and Play(PnP) manager</strong> PnP管理器，判断某一设备需要哪些驱动，并且为该设备加载这些驱动。它会在枚举时查询每一个设备的硬件资源需求，根据这些需求来为设备分配硬件资源，例如I&#x2F;O ports, IRQs, DMA以及memory location。它同时也负责为系统上的设备更改发送合适的事件通知。</li>
+<li><strong>Power manager</strong> 电源管理器，processor power management(PPM)以及power management  framework(PoFx)协调电源事件同时向设备驱动生成电源管理I&#x2F;O通知。</li>
 <li><strong>Windows Driver Model (WDM) Windows Management Instrumentation (WMI) routines</strong> 这些例程允许设备驱动发送性能和配置信息，同时允许从用户态WMI服务接受命令</li>
 <li><strong>Memory manager</strong> 内存管理器实现了虚拟内存，同时为cache manager提供底层支持</li>
-<li><strong>Cache manager</strong> 缓存管理器通过多种手段改善基于文件的I/O性能。将最近引用的磁盘数据暂存在主内存中，将数据的改动先留存在内存中并之后在合适时写入内存</li>
+<li><strong>Cache manager</strong> 缓存管理器通过多种手段改善基于文件的I&#x2F;O性能。将最近引用的磁盘数据暂存在主内存中，将数据的改动先留存在内存中并之后在合适时写入内存</li>
 </ul>
 <p>其中有四大类支持函数</p>
 <ul>
@@ -333,7 +333,7 @@
 <li><strong>control objects</strong> 控制各种操作系统功能<ul>
 <li>Asynchronous Procedure Call (APC)</li>
 <li>Deferred Procedure Call (DPC)</li>
-<li>一些I/O管理器会用到的对象，例如中断对象</li>
+<li>一些I&#x2F;O管理器会用到的对象，例如中断对象</li>
 </ul>
 </li>
 <li><strong>dispatcher objects</strong> 包含内核线程，互斥锁，事件，内核事件对，信号量，计时器和可等待计时器</li>
@@ -349,7 +349,7 @@
 <p>内核的另一项主要工作是将executive和设备驱动程序从Windows支持的硬件架构之间的变化中抽象、隔离出来</p>
 <h4 id="Hardware-abstraction-layer"><a href="#Hardware-abstraction-layer" class="headerlink" title="Hardware abstraction layer"></a>Hardware abstraction layer</h4><p>HAL对硬件访问进行了抽象，为依赖于特定架构或依赖于特定机器的功能提供了统一的接口，例如</p>
 <ul>
-<li>I/O interface</li>
+<li>I&#x2F;O interface</li>
 <li>interrupt controllers</li>
 <li>multiprocessor communication mechanisms</li>
 </ul>
@@ -373,9 +373,9 @@
 </tbody></table>
 <p>x64和arm架构下因为处理器需要ACPI和APIC支持，所以只有一个HAL</p>
 <p>Windows使用HAL扩展模块对不同硬件提供支持，例如Intel DMA controller可能不会出现在某个特定的设备上，或者有时需要对不同的controller提供支持，</p>
-<h4 id="Device-drivers"><a href="#Device-drivers" class="headerlink" title="Device drivers"></a>Device drivers</h4><p>设备驱动是连接I/O管理器与相关硬件的可载入内核模块，他们在内核中会以一下三种上下文之一运行</p>
+<h4 id="Device-drivers"><a href="#Device-drivers" class="headerlink" title="Device drivers"></a>Device drivers</h4><p>设备驱动是连接I&#x2F;O管理器与相关硬件的可载入内核模块，他们在内核中会以一下三种上下文之一运行</p>
 <ul>
-<li>用户线程发起调用了I/O函数</li>
+<li>用户线程发起调用了I&#x2F;O函数</li>
 <li>内核模式系统线程(例如来自PnP管理器的请求)</li>
 <li>由于中断的出现，从而不在某一具体的线程上下文中</li>
 </ul>
@@ -383,9 +383,9 @@
 <p>设备驱动分为以下几类</p>
 <ul>
 <li><strong>Hardware device drivers</strong> 利用HAL操控硬件来向物理硬件或网络写出输出或者查询输入</li>
-<li><strong>File system drivers</strong> 接受面向文件的I/O请求并把它们翻译为与特定设备关联的I/O请求</li>
-<li><strong>File system filter drivers</strong> 执行磁盘镜像和加密，或扫描定位病毒程序，拦截I/O请求</li>
-<li><strong>Network redirectors and servers</strong> 这是将文件系统I/O请求传输到网络上的计算机中的文件系统驱动</li>
+<li><strong>File system drivers</strong> 接受面向文件的I&#x2F;O请求并把它们翻译为与特定设备关联的I&#x2F;O请求</li>
+<li><strong>File system filter drivers</strong> 执行磁盘镜像和加密，或扫描定位病毒程序，拦截I&#x2F;O请求</li>
+<li><strong>Network redirectors and servers</strong> 这是将文件系统I&#x2F;O请求传输到网络上的计算机中的文件系统驱动</li>
 <li><strong>Protocol drivers</strong> 实现网络协议</li>
 <li><strong>Kernel streaming filter drivers</strong> 这些驱动链接在一起用来在数据流上进行信号处理</li>
 <li><strong>Software drivers</strong> 这些内核驱动为某些用户模式进程执行一些只能在内核模式下完成的操作</li>
@@ -411,7 +411,7 @@
 <p>这里的System process指PID为4名称为System的进程</p>
 </blockquote>
 <p>该进程是所有内核模式线程(一种仅运行在内核态的线程)的家，系统线程拥有所有常规用户态线程拥有的属性和上下文，例如硬件上下文、优先级等，但不同的是系统线程仅运行内核模式的代码，且没有用户模式内存空间，因此只能从OS内存堆中分配动态内存</p>
-<p>系统线程通过PsCreateSystemThread或者IoCreateSystemThread函数创建，Windows或其他设备驱动在系统初始化时创建系统线程来执行需要线程上下文的操作，例如发出或等待I/O及其它对象，或者进行设备轮询</p>
+<p>系统线程通过PsCreateSystemThread或者IoCreateSystemThread函数创建，Windows或其他设备驱动在系统初始化时创建系统线程来执行需要线程上下文的操作，例如发出或等待I&#x2F;O及其它对象，或者进行设备轮询</p>
 <h5 id="Memory-Compression-process"><a href="#Memory-Compression-process" class="headerlink" title="* Memory Compression process"></a>* Memory Compression process</h5><p>内存压缩进程使用其用户模式地址空间来存储与已从某些进程的工作集中逐出的备用内存相对应的压缩内存页(机翻没太看明白，看原文也没太看明白，可能到时候回来再看看)</p>
 <h5 id="Session-Manager"><a href="#Session-Manager" class="headerlink" title="Session Manager"></a>Session Manager</h5><p>执行kernel和executive初始化最终阶段的内核模式系统线程创建了这个进程</p>
 <p>主Smss.exe会查询大量注册表信息完成一系列初始化操作(见Part1 P92)，在最后会创建子Smss.exe实例来初始化session 0以及session 1</p>
@@ -445,7 +445,7 @@
 <h3 id="Protected-process"><a href="#Protected-process" class="headerlink" title="Protected process"></a>Protected process</h3><p>正常情况下，一个拥有调试权限的进程可以完全访问此计算机上的任意其他进程，但为了能在迎合数字版权要求的前提下在Windows上播放蓝光之类的媒体影片，Windows推出了protected process</p>
 <p>只有获取了特殊签名的应用程序才能被创建为保护进程，保护进程的EPROCESS中会设置一个特殊的位，这会导致一些安全相关的进程拒绝提供保护进程的部分权限；实际上对于保护进程能够获取的权限仅有</p>
 <ul>
-<li>PROCESS_QUERY/SET_LIMITED_INFOMATION</li>
+<li>PROCESS_QUERY&#x2F;SET_LIMITED_INFOMATION</li>
 <li>PROCESS_TERMINATE</li>
 <li>PROCESS_SUSPEND_RESUME</li>
 </ul>
@@ -530,7 +530,7 @@
 <p>一些Windows关键进程会被要求以某一最低保护等级来启动运行，详见part1 p118</p>
 <h4 id="Third-party-PPL-support"><a href="#Third-party-PPL-support" class="headerlink" title="Third-party PPL support"></a>Third-party PPL support</h4><p>除了微软官方签署的系统组件外，PPL最常见的用途是用于杀毒软件(反恶意软件软件 anti-malware software)，杀软常由三部分组成</p>
 <ul>
-<li>驱动 拦截文件系统或网络的I/O请求，实现拦截功能</li>
+<li>驱动 拦截文件系统或网络的I&#x2F;O请求，实现拦截功能</li>
 <li>用户模式服务 配置驱动、与驱动进行通信，接受驱动下发的事件</li>
 <li>用户模式GUI进程</li>
 </ul>
@@ -539,7 +539,7 @@
 <h4 id="Minimal-processes"><a href="#Minimal-processes" class="headerlink" title="Minimal processes"></a>Minimal processes</h4><p>向NtCreateProcessEx传递特殊的参数即可创建minimal process，这样的进程不具有许多正常进程独有的结构</p>
 <ul>
 <li>不会分配用户模式地址空间，因此也没有PEB</li>
-<li>NTDLL不会被映射到进程中，也不会有任何加载器/API Set信息</li>
+<li>NTDLL不会被映射到进程中，也不会有任何加载器&#x2F;API Set信息</li>
 <li>没有section对象与进程绑定，这意味着没有可执行文件镜像与该进程关联</li>
 <li>EPROCESS会设置特殊的标志，这会导致所有的线程也成为minimal thread</li>
 </ul>
@@ -648,7 +648,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -696,12 +696,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">33k</span>
+    <span title="站点总字数">34k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:01</span>
+    <span title="站点阅读时长">2:04</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
