@@ -32,8 +32,10 @@
 <meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230419102850096.png">
 <meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230419102911136.png">
 <meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230419191238990.png">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230425185953862.png">
+<meta property="og:image" content="https://blog.go2mc.net/2023/04/18/WindowsMemoryManagement/image-20230425191701916.png">
 <meta property="article:published_time" content="2023-04-18T10:50:26.000Z">
-<meta property="article:modified_time" content="2023-04-24T03:24:08.550Z">
+<meta property="article:modified_time" content="2023-04-25T11:48:58.050Z">
 <meta property="article:author" content="Ruby">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="OS">
@@ -196,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-24 03:24:08" itemprop="dateModified" datetime="2023-04-24T03:24:08+00:00">2023-04-24</time>
+                <time title="修改时间：2023-04-25 11:48:58" itemprop="dateModified" datetime="2023-04-25T11:48:58+00:00">2023-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -235,14 +237,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1k</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -297,6 +299,35 @@
 <p>可以使用ProcExp或者windbg的!vm指令查看使用情况</p>
 <p>系统模块会使用的pooltag存放在wdk下Triage目录的Pooltag.txt文件中</p>
 <p>Windows会维护若干个叫做look-aside list的列表，每一个列表内包含大小相同的pool块，从该列表中申请内存效率高于直接从pool中申请内存，这个表用于给经常需要申请特定数据结构所需内存的代码提升效率；申请特定数据结构越勤，列表中存放的块则越多</p>
+<h2 id="虚拟地址空间分布"><a href="#虚拟地址空间分布" class="headerlink" title="虚拟地址空间分布"></a>虚拟地址空间分布</h2><p>虚拟地址空间主要由三部分构成</p>
+<ul>
+<li><p>进程私有地址空间</p>
+<p>即用户态的内存空间，每一个进程都是独立的，不可跨进程访问(部分跨进程内存访问API也是在内核态切换上下文实现的)</p>
+</li>
+<li><p>Session-wide数据和代码</p>
+<p>主要包含与特定会话相关的进程信息，例如Windows子系统Win32k.sys使用的paged pool</p>
+</li>
+<li><p>系统范围的数据和代码</p>
+</li>
+</ul>
+<h3 id="x86地址空间布局"><a href="#x86地址空间布局" class="headerlink" title="x86地址空间布局"></a>x86地址空间布局</h3><p>x86有两种情况，一种是2G(UM)+2G(KM)，一种是3G(UM)+1G(KM)</p>
+<p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230425185953862.png" alt="image-20230425185953862"></p>
+<p>在3+1的情况下，应用程序需要设置特定的文件头才能使用高于2G的空间</p>
+<h3 id="x64地址空间布局"><a href="#x64地址空间布局" class="headerlink" title="x64地址空间布局"></a>x64地址空间布局</h3><p><img src="/2023/04/18/WindowsMemoryManagement/../WindowsMemoryManagement/image-20230425191701916.png" alt="image-20230425191701916"></p>
+<p>现代处理器只实现了48位地址，可表示256TB的地址空间，地址的48-63位是由47位扩展而来，因此中间有一部分Not Canonical Addresses(PatchGuard的部分触发方式会用到这个)</p>
+<h3 id="动态系统虚拟地址空间管理"><a href="#动态系统虚拟地址空间管理" class="headerlink" title="动态系统虚拟地址空间管理"></a>动态系统虚拟地址空间管理</h3><p>32位系统中由于虚拟内存空间较小，因此Windows设计了动态内存管理机制，以下类型的内存分配都是通过这个动态分配来实现的</p>
+<ul>
+<li>Non-paged pool</li>
+<li>Paged pool</li>
+<li>Special pool</li>
+<li>System PTEs</li>
+<li>System mapped views</li>
+<li>File system cache</li>
+<li>PFN database</li>
+<li>Session space</li>
+</ul>
+<p>同时无论是32位还是64位系统，其PTE都是按需分配的，预留地址空间并不会分配PTE</p>
+<p>在32位系统上可以为不同类型的内存设置最大限制，而在64位系统中也可以在注册表中设置不同类型资源的配额(quota)</p>
 
     </div>
 
@@ -380,7 +411,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Windows%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">Windows内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-manager%E7%AE%80%E4%BB%8B"><span class="nav-text">Memory manager简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-manager%E7%BB%84%E4%BB%B6"><span class="nav-text">Memory manager组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E9%A1%B5%E4%B8%8E%E5%B0%8F%E9%A1%B5"><span class="nav-text">大页与小页</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-manager%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-text">Memory manager提供的服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E7%9A%84%E5%9B%9B%E7%A7%8D%E7%8A%B6%E6%80%81%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-text">页的四种状态与内存分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%AE%9A%E5%86%85%E5%AD%98"><span class="nav-text">锁定内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E6%9C%8D%E5%8A%A1"><span class="nav-text">其它服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-mode-heaps-system-memory-pools"><span class="nav-text">Kernel-mode heaps (system memory pools)</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Windows%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">Windows内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-manager%E7%AE%80%E4%BB%8B"><span class="nav-text">Memory manager简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-manager%E7%BB%84%E4%BB%B6"><span class="nav-text">Memory manager组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E9%A1%B5%E4%B8%8E%E5%B0%8F%E9%A1%B5"><span class="nav-text">大页与小页</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-manager%E6%8F%90%E4%BE%9B%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-text">Memory manager提供的服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E7%9A%84%E5%9B%9B%E7%A7%8D%E7%8A%B6%E6%80%81%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-text">页的四种状态与内存分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%AE%9A%E5%86%85%E5%AD%98"><span class="nav-text">锁定内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E6%9C%8D%E5%8A%A1"><span class="nav-text">其它服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kernel-mode-heaps-system-memory-pools"><span class="nav-text">Kernel-mode heaps (system memory pools)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%88%86%E5%B8%83"><span class="nav-text">虚拟地址空间分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#x86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">x86地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x64%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">x64地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%B3%BB%E7%BB%9F%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86"><span class="nav-text">动态系统虚拟地址空间管理</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -442,12 +473,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">34k</span>
+    <span title="站点总字数">35k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:04</span>
+    <span title="站点阅读时长">2:06</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
